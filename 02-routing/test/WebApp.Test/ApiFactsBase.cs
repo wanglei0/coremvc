@@ -15,7 +15,8 @@ namespace WebApp.Test
             Client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                HandleCookies = false
+                HandleCookies = false,
+                BaseAddress = new Uri("https://what.ever.it.is")
             });
         }
 
