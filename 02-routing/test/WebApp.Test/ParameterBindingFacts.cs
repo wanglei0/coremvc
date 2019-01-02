@@ -62,5 +62,57 @@ namespace WebApp.Test
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+        
+        [Fact]
+        public async Task should_fail_if_required_query_parameter_is_not_valid()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/hardcoded-validated-query-integer?text=a_very_long_text_that_fail");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task should_get_parameter_from_path_segment()
+        {
+            HttpResponseMessage response = await Client.GetAsync("/api/binding/path/user/12");
+            
+            Assert.Equal("12", await response.AssertStatusAndGetStringAsync());
+        }
+        
+        [Fact]
+        public async Task should_get_bad_request_if_path_segment_binding_failed()
+        {
+            HttpResponseMessage response = await Client.GetAsync("/api/binding/path/user/wtf");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task should_not_omit_segment_variable()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/path/email");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        
+        [Fact]
+        public async Task should_omit_optional_segment_variable()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/path/optional");
+
+            Assert.Equal("default", await response.AssertStatusAndGetStringAsync());
+        }
+        
+        [Fact]
+        public async Task should_omit_optional_segment_variable_without_default_value()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/path/optional-no-default");
+
+            Assert.Equal("(null value)", await response.AssertStatusAndGetStringAsync());
+        }
     }
 }
