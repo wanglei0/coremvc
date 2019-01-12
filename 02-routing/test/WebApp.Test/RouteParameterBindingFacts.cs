@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -94,7 +95,7 @@ namespace WebApp.Test
             HttpResponseMessage response = await Client.GetAsync(
                 "/api/binding/path/email");
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
         
         [Fact]
@@ -113,6 +114,45 @@ namespace WebApp.Test
                 "/api/binding/path/optional-no-default");
 
             Assert.Equal("(null value)", await response.AssertStatusAndGetStringAsync());
+        }
+
+        [Fact]
+        public async Task should_apply_parameter_constraint()
+        {
+            // There are plenty of constraints. For a full-list, please check
+            // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-2.2#route-constraint-reference
+            
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/path/constraint/user/123");
+            HttpResponseMessage invalidArgResponse = await Client.GetAsync(
+                "/api/binding/path/constraint/user/wtf");
+
+            string s = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal("user: 123", await response.AssertStatusAndGetStringAsync());
+            Assert.Equal(HttpStatusCode.NotFound, invalidArgResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task should_apply_all_remaining_uri()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "/api/binding/remaining-part/a/b/c?q=d");
+            
+            Assert.Equal(
+                "arg: a/b/c", 
+                await response.AssertStatusAndGetStringAsync());
+        }
+
+        [Fact]
+        public async Task should_apply_all_remaining_uri_with_query_binding()
+        {
+            HttpResponseMessage response = await Client.GetAsync(
+                "api/binding/remaining-part-with-query/a/b/c?name=hello");
+            
+            Assert.Equal(
+                "arg: a/b/c, name: hello",
+                await response.AssertStatusAndGetStringAsync());
         }
     }
 }

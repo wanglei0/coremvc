@@ -62,5 +62,25 @@ namespace WebApp.Controllers
         {
             return new ActionResult<string>(optional ?? "(null value)");
         }
+
+        [HttpGet("path/constraint/user/{userId:regex(^[[0-9]]+$)}")]
+        public ActionResult<string> GetUserIdWithConstraint(string userId)
+        {
+            return new ActionResult<string>($"user: {userId}");
+        }
+
+        [HttpGet("remaining-part/{*remaining}")]
+        public ActionResult<string> GetAllRemainingUriParts(string remaining)
+        {
+            return $"arg: {remaining}";
+        }
+        
+        [HttpGet("remaining-part-with-query/{*remaining}")]
+        public ActionResult<string> GetAllRemainingUriPartsWithQueryBinding(
+            string remaining,
+            [FromQuery]string name)
+        {
+            return $"arg: {remaining}, name: {name}";
+        }
     }
 }
