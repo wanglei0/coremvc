@@ -3,7 +3,7 @@ using Xunit;
 
 namespace WebApp.Test
 {
-    public class DependencyInjectionCreateObjectFacts
+    public class CreateObjectFacts
     {
         class IndependentType {}
         
