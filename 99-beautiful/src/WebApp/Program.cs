@@ -38,18 +38,7 @@ namespace WebApp
                 .UseSerilog(
                     (context, logConfig) =>
                     {
-                        if (context.HostingEnvironment.IsDevelopment())
-                        {
-                            logConfig
-                                .MinimumLevel.Debug()
-                                // .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                                .Enrich.FromLogContext()
-                                .WriteTo.Console();
-                        }
-                        else
-                        {
-                            // TODO: Read from configuration file, and write log to file with json formatter.
-                        }
+                        logConfig.ReadFrom.Configuration(context.Configuration);
                     }); 
         }
     }
