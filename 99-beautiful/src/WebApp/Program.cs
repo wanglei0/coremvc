@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace WebApp
 {
@@ -21,7 +24,31 @@ namespace WebApp
             // class and override the CreateWebHostBuilder() method.
             
             return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging(
+                    logging =>
+                    {
+                        // The default web host builder will add at least 3 logging sources:
+                        // Console, Debug and EventSource. This configuration may not meet your
+                        // requirement. So it is better to re-config by yourself.
+                        logging.ClearProviders();
+                    })
+                .UseSerilog(
+                    (context, logConfig) =>
+                    {
+                        if (context.HostingEnvironment.IsDevelopment())
+                        {
+                            logConfig
+                                .MinimumLevel.Debug()
+                                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                                .Enrich.FromLogContext()
+                                .WriteTo.Console();
+                        }
+                        else
+                        {
+                            // TODO: Read from configuration file, and write log to file with json formatter.
+                        }
+                    }); 
         }
     }
 }

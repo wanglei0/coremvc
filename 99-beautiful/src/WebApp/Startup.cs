@@ -7,7 +7,7 @@ using WebApp.Plugins;
 namespace WebApp
 {
     public class Startup
-    {
+    {   
         // We can find all the dependent modules here. That means it is very easy for us to add or
         // remove a module.
         readonly IList<IModuleStartup> modules = new List<IModuleStartup>
@@ -19,6 +19,7 @@ namespace WebApp
         {
             foreach (IModuleStartup startup in modules)
             {
+                
                 startup.ConfigureServices(services);
             }
 
