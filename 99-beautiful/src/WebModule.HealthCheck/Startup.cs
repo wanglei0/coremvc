@@ -11,6 +11,8 @@ namespace WebModule.HealthCheck
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<DatabaseHealthCheck>();
+            
+            // You can add more health check services. One per IHealthCheck implementation.
             services.AddHealthChecks()
                 .AddCheck<DatabaseHealthCheck>("database");
         }
