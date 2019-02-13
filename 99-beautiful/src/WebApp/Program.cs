@@ -33,6 +33,8 @@ namespace WebApp
                         // requirement. So it is better to re-config by yourself.
                         logging.ClearProviders();
                     })
+                // The 3rd parameter of UseSerilog extension method should keep its default value,
+                // so that we can use Log.Logger to access logger anywhere we want.
                 .UseSerilog(
                     (context, logConfig) =>
                     {
@@ -40,7 +42,7 @@ namespace WebApp
                         {
                             logConfig
                                 .MinimumLevel.Debug()
-                                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                                // .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console();
                         }
