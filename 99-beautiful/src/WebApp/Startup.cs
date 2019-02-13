@@ -1,15 +1,30 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using WebApp.Plugins;
 
 namespace WebApp
 {
     public class Startup
     {
+        // We can find all the dependent modules here. That means it is very easy for us to add or
+        // remove a module.
+        readonly IList<IModuleStartup> modules = new List<IModuleStartup>
+        {
+            new WebModule.HealthCheck.Startup()
+        };
+        
         public void ConfigureServices(IServiceCollection services)
         {
-            // In order to create mvc related instances, we should add these definitions to
-            // DI services. This is kind of a shared infrastructure.
+            foreach (IModuleStartup startup in modules)
+            {
+                startup.ConfigureServices(services);
+            }
+
+            // The MVC framework sits at the infrastructure level and thus not belong to any module.
+            // It is not good to create a module called "Infrastructure Module" because the module
+            // should represent business rather than a layer.
             services.AddMvc();
         }
 
@@ -19,8 +34,12 @@ namespace WebApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            foreach (IModuleStartup startup in modules)
+            {
+                startup.Configure(app, env);
+            }
 
-            // In order to let mvc come into play. We should add mvc middleware to the pipeline.
             app.UseMvc();
         }
     }

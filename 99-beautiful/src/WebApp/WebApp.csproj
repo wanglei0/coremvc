@@ -11,7 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Modules" />
+      <ProjectReference Include="..\WebApp.Plugins\WebApp.Plugins.csproj" />
+      <ProjectReference Include="..\WebModule.HealthCheck\WebModule.HealthCheck.csproj" />
     </ItemGroup>
 
 </Project>
