@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Serilog;
+using Serilog.Debugging;
 using WebApp.Logging;
 
 namespace WebApp
@@ -10,7 +12,6 @@ namespace WebApp
     {
         public static void Main(string[] args)
         { 
-            WebAppLogger.Initialize();
             CreateWebHostBuilder(args).Build().Run();
         }
 
@@ -22,7 +23,7 @@ namespace WebApp
             // inline this method to Main, then your unit test is going to crash.
             // 
             // If you want to change the default behavior, you can derive form WebApplicationFactory
-            // class and override the CreateWebHostBuilder() method.
+            // class and override the CreateWebHostBuilder() method.            
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .ConfigureLogging(
@@ -31,12 +32,9 @@ namespace WebApp
                         // The default web host builder will add at least 3 logging sources:
                         // Console, Debug and EventSource. This configuration may not meet your
                         // requirement. So it is better to re-config by yourself.
-                        logging.ClearProviders();
-                        
-                        // In a unit test environment. Since the Log.Logger is not initialized (
-                        // the Main method will not be called), so a SilentLogger(NullLogger) will
-                        // be used for unit test.
-                        logging.AddSerilog(Log.Logger, true);
+                        logging
+                            .ClearProviders()
+                            .AddWebAppLogger(context);
                     });
         }
     }
