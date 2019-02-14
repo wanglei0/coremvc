@@ -331,3 +331,6 @@ ASALocalRun/
 
 # Apple Index File
 .DS_Store
+
+# temporary folder
+tmp/
