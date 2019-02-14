@@ -18,8 +18,4 @@
       <ProjectReference Include="..\WebModule.HealthCheck\WebModule.HealthCheck.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="tmp" />
-    </ItemGroup>
-
 </Project>
