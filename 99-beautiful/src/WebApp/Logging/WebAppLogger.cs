@@ -1,7 +1,4 @@
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace WebApp.Logging
@@ -9,33 +6,18 @@ namespace WebApp.Logging
     static class WebAppLogger
     {
         /// <summary>
-        /// This method will create a temporary logger from a configuration file. It is used before
-        /// the web host is created when no logger is available. So please do remember to close the
-        /// logger after the web host has been initialized.
+        /// This method will create a temporary logger. It is used before the web host is created
+        /// when no logger is available. Please do remember to close the logger after the web host
+        /// has been initialized.
         /// </summary>
-        /// <param name="args">The command line arguments.</param>
         /// <returns>A temporary logger that record logs before application initialization.</returns>
-        public static IEmergencyLogger CreateEmergencyLogger(string[] args)
+        public static IEmergencyLogger CreateEmergencyLogger()
         {
-            var configurationBuilder = new ConfigurationBuilder();
-            if (args != null)
-            {
-                configurationBuilder.AddCommandLine(args);
-            }
-
-            IConfiguration configuration = configurationBuilder
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", false, false)
-                .AddJsonFile(
-                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
-                    true,
-                    false)
-                .AddEnvironmentVariables()
-                .Build();
-
             return new SerilogEmergencyLogger(
                 new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration)
+                    .MinimumLevel.Debug()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
                     .CreateLogger());
         }
 

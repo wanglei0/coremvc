@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog.Core;
 using WebApp.Logging;
 
 namespace WebApp
@@ -29,7 +28,7 @@ namespace WebApp
                 // So my recommendation is to create a temporary logger to record issues happened
                 // during web host initialization. Then just abandoned the logger as soon as the
                 // web host is ready.
-                using (IEmergencyLogger logger = WebAppLogger.CreateEmergencyLogger(args))
+                using (IEmergencyLogger logger = WebAppLogger.CreateEmergencyLogger())
                 {
                     logger.Fatal(
                         error,

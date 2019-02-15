@@ -19,7 +19,6 @@ namespace WebApp
         {
             foreach (IModuleStartup startup in modules)
             {
-                
                 startup.ConfigureServices(services);
             }
 
