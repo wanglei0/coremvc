@@ -19,15 +19,16 @@ namespace WebApp
             catch (Exception error)
             {
                 // Some project template initializes the configuration at the entry point of the
-                // program to create a logger instance. And they will also use the same config
-                // instance to initialize the web-host. I don't think it is a good idea since the
-                // configuration contains too many things which may be hard to figure out at the
-                // entry point. And there is no method exposed to initialize the configuration
-                // consistently.
+                // program to create a logger instance. This is not feasible for certain
+                // environment. For example. If the application is hosted on IIS Server. The
+                // GetCurrentDirectory method will returns the work's base address rather than the
+                // application content root.
                 //
                 // So my recommendation is to create a temporary logger to record issues happened
                 // during web host initialization. Then just abandoned the logger as soon as the
-                // web host is ready.
+                // web host is ready. Since it is most possible that the logger will record fatal
+                // errors, it is better set a global wide sink to ensure the logs are recorded.
+                // (e.g. OS Event Sink, or local file system).
                 using (IEmergencyLogger logger = WebAppLogger.CreateEmergencyLogger())
                 {
                     logger.Fatal(
