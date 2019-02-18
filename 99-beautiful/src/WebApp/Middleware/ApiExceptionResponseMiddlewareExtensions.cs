@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace WebApp.ExceptionHandler
+namespace WebApp.Middleware
 {
-    static class ApiExceptionHandlerMiddleware
+    static class ApiExceptionResponseMiddlewareExtensions
     {
         public static IApplicationBuilder UseApiExceptionHandler(this IApplicationBuilder appBuilder)
         {

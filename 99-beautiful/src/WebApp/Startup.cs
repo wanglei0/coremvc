@@ -6,7 +6,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using WebApp.ExceptionHandler;
+using WebApp.Middleware;
 using WebApp.Plugins;
 
 namespace WebApp
@@ -15,6 +15,7 @@ namespace WebApp
     {   
         // We can find all the dependent modules here. That means it is very easy for us to add or
         // remove a module.
+        // 
         readonly IList<IModuleStartup> modules = new List<IModuleStartup>
         {
             new WebModule.HealthCheck.Startup(),

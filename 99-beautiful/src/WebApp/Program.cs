@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using WebApp.Logging;
+using WebApp.Middleware;
 
 namespace WebApp
 {
@@ -29,7 +29,7 @@ namespace WebApp
                 // web host is ready. Since it is most possible that the logger will record fatal
                 // errors, it is better set a global wide sink to ensure the logs are recorded.
                 // (e.g. OS Event Sink, or local file system).
-                using (IEmergencyLogger logger = WebAppLogger.CreateEmergencyLogger())
+                using (IEmergencyLogger logger = LoggingMiddlewareExtensions.CreateEmergencyLogger())
                 {
                     logger.Fatal(
                         error,

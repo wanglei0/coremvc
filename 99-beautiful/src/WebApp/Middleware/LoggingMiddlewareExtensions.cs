@@ -1,9 +1,11 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
+using Serilog.Core;
 
-namespace WebApp.Logging
+namespace WebApp.Middleware
 {
-    static class WebAppLogger
+    static class LoggingMiddlewareExtensions
     {
         /// <summary>
         /// This method will create a temporary logger. It is used before the web host is created
@@ -30,6 +32,25 @@ namespace WebApp.Logging
             
             return builder.UseSerilog(
                 (ctx, logging) => logging.ReadFrom.Configuration(ctx.Configuration));
+        }
+        
+        class SerilogEmergencyLogger : IEmergencyLogger
+        {
+            readonly Logger logger;
+
+            public SerilogEmergencyLogger(Logger logger) { this.logger = logger; }
+        
+            public void Dispose() { logger.Dispose(); }
+
+            public void Fatal(Exception exception, string messageTemplate, params object[] args)
+            {
+                logger.Fatal(exception, messageTemplate, args);
+            }
+
+            public void Warning(string messageTemplate, params object[] args)
+            {
+                logger.Warning(messageTemplate, args);
+            }
         }
     }
 }
