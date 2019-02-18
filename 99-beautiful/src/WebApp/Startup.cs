@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using WebApp.Middleware;
+using WebApp.ExceptionHandling;
 using WebApp.Plugins;
 
 namespace WebApp
@@ -73,24 +71,6 @@ namespace WebApp
             {
                 mvcBuilder.AddApplicationPart(assembly);
             }
-
-            services.AddSingleton(_ =>
-            {
-                var handler = new HttpClientHandler
-                {
-                    // Add your own SSL validation rule here to ensure cert can be trusted. Here
-                    // we just return true indicating that we will simply accept the cert.
-                    ServerCertificateCustomValidationCallback =
-                        (message, cert, chain, error) => true,
-
-                    // Normally server side http client will treat redirection as a failure, or
-                    // will redirect manually. You can change this settings on demand.
-                    AllowAutoRedirect = false
-                };
-
-                // Modify timeout value. TODO: expose it via configuration
-                return new HttpClient(handler) {Timeout = TimeSpan.FromSeconds(20)};
-            });
         }
     }
 }

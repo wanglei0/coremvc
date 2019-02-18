@@ -1,6 +1,6 @@
 using System;
 
-namespace WebApp.Middleware
+namespace WebApp.Logging
 {
     interface IEmergencyLogger : IDisposable
     {

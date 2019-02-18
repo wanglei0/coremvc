@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace WebApp.Middleware
+namespace WebApp.ExceptionHandling
 {
     static class ApiExceptionResponseMiddlewareExtensions
     {
