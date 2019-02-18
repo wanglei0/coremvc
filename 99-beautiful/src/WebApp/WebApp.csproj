@@ -18,6 +18,7 @@
     <ItemGroup>
         <ProjectReference Include="..\WebApp.Plugins\WebApp.Plugins.csproj" />
         <ProjectReference Include="..\WebModule.HealthCheck\WebModule.HealthCheck.csproj" />
+        <ProjectReference Include="..\WebModule.SampleModule\WebModule.SampleModule.csproj" />
     </ItemGroup>
 
     <ItemGroup>
