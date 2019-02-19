@@ -6,7 +6,7 @@ namespace WebApp.ExceptionHandling
 {
     static class ApiExceptionResponseMiddlewareExtensions
     {
-        public static IApplicationBuilder UseApiExceptionHandler(this IApplicationBuilder appBuilder)
+        public static IApplicationBuilder UseApiExceptionResponse(this IApplicationBuilder appBuilder)
         {
             // The exception handling can be triggered by:
             // 

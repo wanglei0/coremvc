@@ -54,7 +54,7 @@ namespace WebApp
                 // We use exception handler to create common error response rather than logging,
                 // since logging is done by the framework.
                 //
-                app.UseApiExceptionHandler();
+                app.UseApiExceptionResponse();
             }
 
             app.UseMvc();
