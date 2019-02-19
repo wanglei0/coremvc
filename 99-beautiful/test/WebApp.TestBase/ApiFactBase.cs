@@ -80,10 +80,12 @@ namespace WebApp.TestBase
         /// Please rewrite the method if you want to replace some of the components in the service
         /// collection.
         /// </summary>
-        /// <param name="serviceCollection">
+        /// <param name="services">
         /// The <see cref="IServiceCollection"/> object.
         /// </param>
-        protected virtual void ConfigureServices(IServiceCollection serviceCollection) {}
+        protected virtual void ConfigureServices(IServiceCollection services)
+        {
+        }
 
         /// <summary>
         /// Create an HTTP client object which connects to the external services. You can use the
