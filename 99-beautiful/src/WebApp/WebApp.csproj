@@ -41,10 +41,16 @@
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
         <None Remove="Data\sampledb.db" />
+        <None Remove="Data\**" />
+        <Content Remove="Data\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data" />
+      <Compile Remove="Data\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Data\**" />
     </ItemGroup>
 
 </Project>
