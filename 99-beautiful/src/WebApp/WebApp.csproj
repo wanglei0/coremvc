@@ -41,7 +41,6 @@
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
         <None Remove="Data\sampledb.db" />
-        <Content Include="Data\sampledb.db" />
     </ItemGroup>
 
     <ItemGroup>
