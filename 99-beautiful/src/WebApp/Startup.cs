@@ -3,23 +3,27 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WebApp.ExceptionHandling;
+using WebApp.PluginEngine;
 using WebApp.Plugins;
 
 namespace WebApp
 {
     public class Startup
-    {   
-        // We can find all the dependent modules here. That means it is very easy for us to add or
-        // remove a module.
-        // 
-        readonly IList<IModuleStartup> modules = new List<IModuleStartup>
+    {
+        readonly IList<IModuleStartup> modules;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
-            new WebModule.HealthCheck.Startup(),
-            new WebModule.SampleModule.Startup()
-        };
-        
+            PluginLoader pluginLoader = new PluginLoader(configuration, logger)
+                .AddPluginStartupClass(typeof(WebModule.HealthCheck.Startup))
+                .AddPluginStartupClass(typeof(WebModule.SampleModule.Startup));
+            modules = pluginLoader.Load();
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             foreach (IModuleStartup startup in modules)
@@ -65,7 +69,10 @@ namespace WebApp
             // The MVC framework sits at the infrastructure level and thus not belong to any module.
             // It is not good to create a module called "Infrastructure Module" because the module
             // should represent business rather than a layer.
-            IMvcBuilder mvcBuilder = services.AddMvc();
+            IMvcBuilder mvcBuilder = services.AddMvc()
+                .ConfigureApplicationPartManager(
+                    partManager =>
+                        partManager.FeatureProviders.Add(new InternalControllerFeatureProvider()));
             
             foreach (Assembly assembly in modules.Select(m => m.GetType().Assembly).Distinct())
             {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace WebModule.SampleModule.Domain
 {
-    public class MessageRepository
+    class MessageRepository
     {
         public IEnumerable<Message> GetAllMessages()
         {

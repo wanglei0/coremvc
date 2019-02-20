@@ -6,7 +6,7 @@ namespace WebModule.SampleModule.Domain
         "ReSharper",
         "UnusedAutoPropertyAccessor.Global",
         Justification = "Will be used on serialization")]
-    public class Message
+    class Message
     {
         public string Text { get; }
 

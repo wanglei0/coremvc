@@ -5,7 +5,7 @@ namespace WebModule.SampleModule.Controllers
 {
     [ApiController]
     [Route("message")]
-    public class MessageController : Controller
+    class MessageController : Controller
     {
         readonly MessageRepository messageRepository;
 

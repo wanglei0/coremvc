@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace WebModule.HealthCheck
@@ -16,17 +17,23 @@ namespace WebModule.HealthCheck
     class DatabaseHealthCheck : IHealthCheck
     {
         readonly IOptionsSnapshot<HealthCheckConfig> config;
+        readonly ILogger<DatabaseHealthCheck> logger;
 
-        public DatabaseHealthCheck(IOptionsSnapshot<HealthCheckConfig> config)
+        public DatabaseHealthCheck(
+            IOptionsSnapshot<HealthCheckConfig> config,
+            ILogger<DatabaseHealthCheck> logger)
         {
             this.config = config;
+            this.logger = logger;
         }
-        
+
         public Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
             CancellationToken cancellationToken)
         {
             string connectionString = config.Value?.ConnectionString;
+
+            logger.LogDebug("The connection string is {connectionString}", connectionString);
             
             if (string.IsNullOrEmpty(connectionString))
             {
