@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -18,11 +18,13 @@ namespace WebApp.TestBase
     /// This is the base class for running end-to-end API test.
     /// </summary>
     /// <typeparam name="T">The type of the startup class for the web application.</typeparam>
-    public abstract class ApiFactBase<T> : IDisposable 
+    public abstract class WebAppFactBase<T> : IDisposable 
         where T : class
     {
+        const string DefaultBaseAddress = "http://www.baseaddress.com";
         readonly WebApplicationFactoryClientOptions clientOptions;
         readonly TestLoggingConfiguration loggingConfiguration;
+        readonly ITestServiceConfigurator testServiceConfigurator;
         readonly ITestOutputHelper output;
         
         WebApplicationFactory<T> factory;
@@ -42,29 +44,11 @@ namespace WebApp.TestBase
                     ref factory,
                     () => new WebApplicationFactory<T>().WithWebHostBuilder(
                         wb => wb
-                            .ConfigureServices(ResetLogging)
+                            .ConfigureServices(ConfigureServicesForTest)
                             .ConfigureServices(ConfigureServices)
                             .ConfigureAppConfiguration(ConfigureConfiguration)));
                 return factory;
             }
-        }
-
-        void ResetLogging(WebHostBuilderContext context, IServiceCollection services)
-        {
-            services.RemoveAll<ILoggerFactory>();
-            services.RemoveAll(typeof(ILogger<>));
-            
-            services.AddLogging(
-                lb =>
-                {
-                    lb.ClearProviders();
-                    if (loggingConfiguration.EnableLogging)
-                    {
-                        lb.AddProvider(
-                                new XUnitLoggerProvider(output, loggingConfiguration.SupportScope))
-                            .SetMinimumLevel(loggingConfiguration.MinimumLevel);
-                    }
-                });
         }
 
         /// <summary>
@@ -90,23 +74,23 @@ namespace WebApp.TestBase
         /// <summary>
         /// Create an end-to-end API test using the default configuration.
         /// </summary>
-        protected ApiFactBase() : this(
+        protected WebAppFactBase() : this(
             new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://www.baseaddress.com"),
+                BaseAddress = new Uri(DefaultBaseAddress),
                 HandleCookies = true
             },
             new TestLoggingConfiguration(false, false, LogLevel.Debug),
             null) { }
 
-        protected ApiFactBase(
+        protected WebAppFactBase(
             TestLoggingConfiguration loggingConfiguration, 
             ITestOutputHelper output) : this(
             new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://www.baseaddress.com"),
+                BaseAddress = new Uri(DefaultBaseAddress),
                 HandleCookies = true
             },
             loggingConfiguration,
@@ -118,16 +102,23 @@ namespace WebApp.TestBase
         /// <param name="clientOptions">The HTTP client configuration.</param>
         /// <param name="loggingConfiguration">Logging configuration.</param>
         /// <param name="outputHelper">The output helper.</param>
-        protected ApiFactBase(
+        /// <param name="serviceConfigurator">
+        /// The service configuration that can be used to override default services configuration
+        /// in a common manner.
+        /// </param>
+        protected WebAppFactBase(
             WebApplicationFactoryClientOptions clientOptions,
             TestLoggingConfiguration loggingConfiguration,
-            ITestOutputHelper outputHelper)
+            ITestOutputHelper outputHelper,
+            ITestServiceConfigurator serviceConfigurator = null)
         {
             this.clientOptions =
                 clientOptions ?? throw new ArgumentNullException(nameof(clientOptions));
             this.loggingConfiguration =
                 loggingConfiguration ??
                 throw new ArgumentNullException(nameof(loggingConfiguration));
+            testServiceConfigurator =
+                serviceConfigurator ?? new WebAppServiceConfigurator();
             output = outputHelper ?? new NullOutputHelper();
         }
 
@@ -156,17 +147,6 @@ namespace WebApp.TestBase
         }
 
         /// <summary>
-        /// Create an HTTP client object which connects to the external services. You can use the
-        /// created HTTP client instance to replace the one in your application's service
-        /// collection.
-        /// </summary>
-        /// <returns>The HTTP client instance.</returns>
-        protected HttpClient CreateHttpClientToCallExternalServices()
-        {
-            return new HttpClient(ExternalServices);
-        }
-
-        /// <summary>
         /// Release all the resources in the test.
         /// </summary>
         public void Dispose()
@@ -189,5 +169,17 @@ namespace WebApp.TestBase
         /// </param>
         [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         protected virtual void Dispose(bool disposing) { }
+
+        void ConfigureServicesForTest(IServiceCollection services)
+        {
+            testServiceConfigurator.ConfigureService(
+                services,
+                new Dictionary<string, object>
+                {
+                    { TestServiceConfiguratorKeys.ExternalService, ExternalServices },
+                    { TestServiceConfiguratorKeys.LoggingConfiguration, loggingConfiguration },
+                    { TestServiceConfiguratorKeys.TestOutputHelper, output }
+                });
+        }
     }
 }

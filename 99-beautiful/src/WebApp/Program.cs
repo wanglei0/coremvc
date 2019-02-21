@@ -15,7 +15,15 @@ namespace WebApp
             
             try
             {
-                webHost = CreateWebHostBuilder(args).Build();
+                webHost = CreateWebHostBuilder(args)
+                    
+                    // Although you can put the following configuration to CreateWebHostBuilder,
+                    // I suggest putting these configurations outside. Because these configuration
+                    // is either supplement configuration (Logging) or highly related to certain
+                    // environment. We can configure these aspects in the unit test base class.
+                    .UseWebAppLogger()
+                    .UseHttpClient()
+                    .Build();
             }
             catch (Exception error)
             {
@@ -60,9 +68,7 @@ namespace WebApp
                         // Console, Debug and EventSource. This configuration may not meet your
                         // requirement. So it is better to re-config by yourself.
                         logging.ClearProviders();
-                    })
-                .UseHttpClient()
-                .UseWebAppLogger();
+                    });
         }
     }
 }

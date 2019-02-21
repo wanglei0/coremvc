@@ -81,7 +81,7 @@ namespace WebApp.PluginEngine
                 $"Cannot find supported constructor for {type.FullName}");
         }
 
-        IModuleStartup TryCreateWithParameters(
+        static IModuleStartup TryCreateWithParameters(
             IEnumerable<ConstructorInfo> constructorInfos, Type[] parameterTypes, object[] args)
         {
             ConstructorInfo constructor = constructorInfos

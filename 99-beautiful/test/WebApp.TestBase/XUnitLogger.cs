@@ -92,25 +92,22 @@ namespace WebApp.TestBase
 
         void GetScopeInformation(StringBuilder contentBuilder)
         {
-            var provider = scopeProvider;
+            IExternalScopeProvider provider = scopeProvider;
+
+            if (provider == null) { return; }
             
-            if (provider != null)
+            var initialLength = contentBuilder.Length;
+            provider.ForEachScope((scope, state) =>
             {
-                var initialLength = contentBuilder.Length;
+                (StringBuilder builder, int length) = state;
+                var first = length == builder.Length;
+                builder.Append(first ? "=> " : " => ").Append(scope);
+            }, (contentBuilder, initialLength));
 
-                provider.ForEachScope((scope, state) =>
-                {
-                    var (builder, length) = state;
-                    var first = length == builder.Length;
-                    builder.Append(first ? "=> " : " => ").Append(scope);
-                }, (contentBuilder, initialLength));
-
-                if (contentBuilder.Length > initialLength)
-                {
-                    contentBuilder.Insert(initialLength, MessagePadding);
-                    contentBuilder.AppendLine();
-                }
-            }
+            bool noScopeInformation = contentBuilder.Length <= initialLength;
+            if (noScopeInformation) { return; }
+            contentBuilder.Insert(initialLength, MessagePadding);
+            contentBuilder.AppendLine();
         }
 
         public bool IsEnabled(LogLevel logLevel) => logLevel != LogLevel.None;

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace WebApp.Test.End2End
 {
-    public class MessageControllerFacts : ApiFactBase<Startup>
+    public class MessageControllerFacts : WebAppFactBase<Startup>
     {
         [Fact]
         public async Task should_get_all_messages()

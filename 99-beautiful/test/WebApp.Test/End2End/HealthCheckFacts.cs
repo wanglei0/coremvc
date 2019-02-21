@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace WebApp.Test.End2End
 {
-    public class HealthCheckFacts : ApiFactBase<Startup>
+    public class HealthCheckFacts : WebAppFactBase<Startup>
     {
         readonly HealthCheckConfig config = new HealthCheckConfig();
 

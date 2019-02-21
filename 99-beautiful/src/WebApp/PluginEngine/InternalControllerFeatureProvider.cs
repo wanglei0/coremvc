@@ -38,15 +38,16 @@ namespace WebApp.PluginEngine
                 return false;
             }
 
-            if (!typeInfo.Name.EndsWith(
-                    ControllerTypeNameSuffix,
-                    StringComparison.OrdinalIgnoreCase) &&
-                !typeInfo.IsDefined(typeof(ControllerAttribute)))
+            bool hasControllerSuffix = typeInfo.Name.EndsWith(
+                ControllerTypeNameSuffix,
+                StringComparison.OrdinalIgnoreCase);
+
+            if (hasControllerSuffix)
             {
-                return false;
+                return true;
             }
 
-            return true;
+            return typeInfo.IsDefined(typeof(ControllerAttribute));
         }
     }
 }
