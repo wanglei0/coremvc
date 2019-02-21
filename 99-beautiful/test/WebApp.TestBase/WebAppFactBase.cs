@@ -21,7 +21,6 @@ namespace WebApp.TestBase
     public abstract class WebAppFactBase<T> : IDisposable 
         where T : class
     {
-        const string DefaultBaseAddress = "http://www.baseaddress.com";
         readonly WebApplicationFactoryClientOptions clientOptions;
         readonly TestLoggingConfiguration loggingConfiguration;
         readonly ITestServiceConfigurator testServiceConfigurator;
@@ -75,24 +74,14 @@ namespace WebApp.TestBase
         /// Create an end-to-end API test using the default configuration.
         /// </summary>
         protected WebAppFactBase() : this(
-            new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri(DefaultBaseAddress),
-                HandleCookies = true
-            },
+            WebAppFactHttpClientConfiguration.DefaultHttpClientOptions,
             new TestLoggingConfiguration(false, false, LogLevel.Debug),
             null) { }
 
         protected WebAppFactBase(
             TestLoggingConfiguration loggingConfiguration, 
             ITestOutputHelper output) : this(
-            new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri(DefaultBaseAddress),
-                HandleCookies = true
-            },
+            WebAppFactHttpClientConfiguration.DefaultHttpClientOptions,
             loggingConfiguration,
             output) { }
 
