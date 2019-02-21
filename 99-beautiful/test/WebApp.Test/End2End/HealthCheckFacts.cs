@@ -7,13 +7,20 @@ using WebApp.Test.Utils;
 using WebApp.TestBase;
 using WebModule.HealthCheck;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace WebApp.Test.End2End
 {
     public class HealthCheckFacts : ApiFactBase<Startup>
     {
         readonly HealthCheckConfig config = new HealthCheckConfig();
-        
+
+        public HealthCheckFacts(ITestOutputHelper output) : base(
+            TestLoggingConfiguration.EnableLoggingWarning,
+            output)
+        {
+        }
+
         protected override void ConfigureServices(IServiceCollection services)
         {
             base.ConfigureServices(services);

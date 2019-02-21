@@ -61,8 +61,8 @@ namespace WebApp
                         // requirement. So it is better to re-config by yourself.
                         logging.ClearProviders();
                     })
-                .UseWebAppLogger()
-                .UseHttpClient();
+                .UseHttpClient()
+                .UseWebAppLogger();
         }
     }
 }

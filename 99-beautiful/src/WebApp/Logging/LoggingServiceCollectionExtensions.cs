@@ -1,7 +1,5 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
-using Serilog.Core;
 
 namespace WebApp.Logging
 {
