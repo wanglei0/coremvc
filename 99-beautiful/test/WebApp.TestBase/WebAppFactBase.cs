@@ -32,6 +32,7 @@ namespace WebApp.TestBase
         protected HttpClient Client =>
             app.GetOrCreateHttpClient(clientOptions, wb => wb
                 .ConfigureServices(ConfigureServicesForTest)
+                .ConfigureAppConfiguration(ConfigureConfigurationForTest)
                 .ConfigureServices(ConfigureServices)
                 .ConfigureAppConfiguration(ConfigureConfiguration));
 
@@ -161,6 +162,13 @@ namespace WebApp.TestBase
                     { TestServiceConfiguratorKeys.LoggingConfiguration, loggingConfiguration },
                     { TestServiceConfiguratorKeys.TestOutputHelper, Output }
                 });
+        }
+
+        void ConfigureConfigurationForTest(
+            WebHostBuilderContext context,
+            IConfigurationBuilder configurationBuilder)
+        {
+            testServiceConfigurator.ConfigureConfiguration(context, configurationBuilder);
         }
     }
 }

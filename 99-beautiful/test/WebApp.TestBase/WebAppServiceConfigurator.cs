@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -31,6 +33,17 @@ namespace WebApp.TestBase
 
             ResetLogging(services, GetLoggingConfiguration(), GetTestOutputHelper());
             UseHttpClientToExternalSystem(services, GetExternalServices());
+        }
+
+        public void ConfigureConfiguration(
+            WebHostBuilderContext context,
+            IConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.AddInMemoryCollection(
+                new Dictionary<string, string>
+                {
+                    {"Database:ConnectionString", "Data Source=:memory:;Version=3;New=True;"}
+                });
         }
 
         static void ResetLogging(
