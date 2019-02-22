@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
-using System.Threading;
 using Axe.SimpleHttpMock;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -24,50 +23,28 @@ namespace WebApp.TestBase
         readonly WebApplicationFactoryClientOptions clientOptions;
         readonly TestLoggingConfiguration loggingConfiguration;
         readonly ITestServiceConfigurator testServiceConfigurator;
-        readonly ITestOutputHelper output;
-        
-        WebApplicationFactory<T> factory;
-        HttpClient client;
+        readonly WebAppForTest<T> app;
         bool isDisposed;
-
-        WebApplicationFactory<T> Factory
-        {
-            get
-            {
-                // There is no need to put thread-safe into consideration here since the testing
-                // methods in the same test class will not run in parallel.
-                //
-                // We lazily create the factory mainly because we want to avoid calling a virtual
-                // method in the constructor.
-                LazyInitializer.EnsureInitialized(
-                    ref factory,
-                    () => new WebApplicationFactory<T>().WithWebHostBuilder(
-                        wb => wb
-                            .ConfigureServices(ConfigureServicesForTest)
-                            .ConfigureServices(ConfigureServices)
-                            .ConfigureAppConfiguration(ConfigureConfiguration)));
-                return factory;
-            }
-        }
 
         /// <summary>
         /// Get an HTTP client that can send a request to the testing web application. 
         /// </summary>
-        protected HttpClient Client
-        {
-            get
-            {
-                LazyInitializer.EnsureInitialized(
-                    ref client,
-                    () => Factory.CreateClient(clientOptions));
-                return client;
-            }
-        }
+        protected HttpClient Client =>
+            app.GetOrCreateHttpClient(clientOptions, wb => wb
+                .ConfigureServices(ConfigureServicesForTest)
+                .ConfigureServices(ConfigureServices)
+                .ConfigureAppConfiguration(ConfigureConfiguration));
 
         /// <summary>
         /// Get a configurable object that simulates all the external services.
         /// </summary>
         protected MockHttpServer ExternalServices { get; } = new MockHttpServer();
+
+        /// <summary>
+        /// Get the output helper which can help you to write some diagnostic information during
+        /// test.
+        /// </summary>
+        protected ITestOutputHelper Output { get; }
 
         /// <inheritdoc />
         /// <summary>
@@ -78,6 +55,15 @@ namespace WebApp.TestBase
             new TestLoggingConfiguration(false, false, LogLevel.Debug),
             null) { }
 
+        /// <summary>
+        /// Create an end-to-end API test.
+        /// </summary>
+        /// <param name="loggingConfiguration">
+        /// Custom logging configuration.
+        /// </param>
+        /// <param name="output">
+        /// The output helper that logger will write information to.
+        /// </param>
         protected WebAppFactBase(
             TestLoggingConfiguration loggingConfiguration, 
             ITestOutputHelper output) : this(
@@ -90,7 +76,9 @@ namespace WebApp.TestBase
         /// </summary>
         /// <param name="clientOptions">The HTTP client configuration.</param>
         /// <param name="loggingConfiguration">Logging configuration.</param>
-        /// <param name="outputHelper">The output helper.</param>
+        /// <param name="outputHelper">
+        /// The output helper that logger will write information to.
+        /// </param>
         /// <param name="serviceConfigurator">
         /// The service configuration that can be used to override default services configuration
         /// in a common manner.
@@ -108,17 +96,23 @@ namespace WebApp.TestBase
                 throw new ArgumentNullException(nameof(loggingConfiguration));
             testServiceConfigurator =
                 serviceConfigurator ?? new WebAppServiceConfigurator();
-            output = outputHelper ?? new NullOutputHelper();
+            Output = outputHelper ?? new NullOutputHelper();
+            app = new WebAppForTest<T>();
         }
 
         /// <summary>
         /// Please rewrite the method if you want to replace some of the components in the service
         /// collection.
         /// </summary>
+        /// <param name="context">
+        /// The web-host builder context from which you can get information.
+        /// </param>
         /// <param name="services">
         /// The <see cref="IServiceCollection"/> object.
         /// </param>
-        protected virtual void ConfigureServices(IServiceCollection services)
+        protected virtual void ConfigureServices(
+            WebHostBuilderContext context,
+            IServiceCollection services)
         {
         }
 
@@ -135,6 +129,7 @@ namespace WebApp.TestBase
         {
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Release all the resources in the test.
         /// </summary>
@@ -142,10 +137,7 @@ namespace WebApp.TestBase
         {
             if (isDisposed) return;
             Dispose(true);
-            
-            client?.Dispose();
-            factory?.Dispose();
-            
+            app.Dispose();
             isDisposed = true;
         }
 
@@ -167,7 +159,7 @@ namespace WebApp.TestBase
                 {
                     { TestServiceConfiguratorKeys.ExternalService, ExternalServices },
                     { TestServiceConfiguratorKeys.LoggingConfiguration, loggingConfiguration },
-                    { TestServiceConfiguratorKeys.TestOutputHelper, output }
+                    { TestServiceConfiguratorKeys.TestOutputHelper, Output }
                 });
         }
     }

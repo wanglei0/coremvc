@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using WebApp.Test.Utils;
@@ -21,10 +22,10 @@ namespace WebApp.Test.End2End
         {
         }
 
-        protected override void ConfigureServices(IServiceCollection services)
+        protected override void ConfigureServices(
+            WebHostBuilderContext context,
+            IServiceCollection services)
         {
-            base.ConfigureServices(services);
-            
             // TODO: Replace connection string with BaseClass values.
             services.AddSingleton<IOptionsSnapshot<HealthCheckConfig>>(
                 _ => new OptionsSnapshot<HealthCheckConfig>(config));
