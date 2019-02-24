@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using WebApp.Deployment;
+using WebApp.Infrastructure.Test.Deployment.Helpers;
 using Xunit;
 
 namespace WebApp.Infrastructure.Test.Deployment
@@ -16,24 +17,21 @@ namespace WebApp.Infrastructure.Test.Deployment
             var recorder = new SimpleRecorder();
 
             new WebHostBuilder()
-                .UseSetting(WebHostDefaults.EnvironmentKey, environmentName)
+                .UseEnvironment(environmentName)
                 .WithWebHostBuilder(
                     h => h.IsDevelopment(),
                     wb => wb
                         .ConfigureServices(
-                            (c, s) => recorder.Record(
-                                "Development: ConfigureServices(context, services)"))
+                            (c, s) => recorder.Record("Development: ConfigureServices(context, services)"))
                         .ConfigureServices(
                             s => recorder.Record("Development: ConfigureServices(services)")))
                 .WithWebHostBuilder(
                     h => h.IsProduction(),
                     wb => wb
                         .ConfigureServices(
-                            (c, s) => recorder.Record(
-                                "Production: ConfigureServices(context, services)"))
-                        .ConfigureServices(
-                            s => recorder.Record("Production: ConfigureServices(services)")))
-                .UseStartup<Startup>()
+                            (c, s) => recorder.Record("Production: ConfigureServices(context, services)"))
+                        .ConfigureServices(s => recorder.Record("Production: ConfigureServices(services)")))
+                .UseStartup<NullStartup>()
                 .Build();
             
             Assert.Equal(
@@ -54,18 +52,16 @@ namespace WebApp.Infrastructure.Test.Deployment
             var recorder = new SimpleRecorder();
 
             new WebHostBuilder()
-                .UseSetting(WebHostDefaults.EnvironmentKey, environmentName)
+                .UseEnvironment(environmentName)
                 .WithWebHostBuilder(
                     h => h.IsDevelopment(),
                     wb => wb.ConfigureAppConfiguration(
-                        (c, cb) => recorder.Record(
-                            "Development: ConfigureAppConfiguration(context, builder)")))
+                        (c, cb) => recorder.Record("Development: ConfigureAppConfiguration(context, builder)")))
                 .WithWebHostBuilder(
                     h => h.IsProduction(),
                     wb => wb.ConfigureAppConfiguration(
-                        (c, cb) => recorder.Record(
-                            "Production: ConfigureAppConfiguration(context, builder)")))
-                .UseStartup<Startup>()
+                        (c, cb) => recorder.Record("Production: ConfigureAppConfiguration(context, builder)")))
+                .UseStartup<NullStartup>()
                 .Build();
 
             Assert.Equal(
@@ -78,15 +74,13 @@ namespace WebApp.Infrastructure.Test.Deployment
         {
             string valueFromDevEnv = null;
             string valueFromProdEnv = null;
-            
+
             new WebHostBuilder()
                 .UseSetting("key", "value")
                 .WithWebHostBuilder(
-                    h => h.IsDevelopment(),
-                    wb => valueFromDevEnv = wb.GetSetting("key"))
+                    h => h.IsDevelopment(), wb => valueFromDevEnv = wb.GetSetting("key"))
                 .WithWebHostBuilder(
-                    h => h.IsProduction(),
-                    wb => valueFromProdEnv = wb.GetSetting("key"));
+                    h => h.IsProduction(), wb => valueFromProdEnv = wb.GetSetting("key"));
             
             Assert.Equal("value", valueFromDevEnv);
             Assert.Equal("value", valueFromProdEnv);
@@ -100,10 +94,7 @@ namespace WebApp.Infrastructure.Test.Deployment
             Assert.Throws<InvalidOperationException>(
                 () => builder.WithWebHostBuilder(
                     h => h.IsDevelopment(),
-                    wb =>
-                    {
-                        wb.UseSetting("key", "value");
-                    }));
+                    wb => wb.UseSetting("key", "value")));
         }
 
         [Fact]
