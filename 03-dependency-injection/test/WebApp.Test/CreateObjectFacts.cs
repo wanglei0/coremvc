@@ -1,11 +1,39 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using System;
 
 namespace WebApp.Test
 {
     public class CreateObjectFacts
     {
         class IndependentType {}
+        class UnregisteredType {}
+
+        [Fact]
+        public void should_return_null_if_not_registered() 
+        {
+            // Given
+            var serviceCollection = new ServiceCollection();
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+
+            // When
+            var instance = provider.GetService<UnregisteredType>();
+
+            // Then
+            Assert.Null(instance);
+        }
+
+        [Fact]
+        public void should_throw_if_dependency_cannot_be_resolved()
+        {
+            // Given
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddTransient<WithDependency>();
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+
+            // When
+            Assert.Throws<InvalidOperationException>(() => provider.GetService<WithDependency>());
+        }
         
         [Fact]
         public void should_create_object_using_delegate_registration()
