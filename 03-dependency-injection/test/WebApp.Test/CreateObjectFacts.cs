@@ -1,12 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebApp.Test
 {
     public class CreateObjectFacts
     {
         class IndependentType {}
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
         class UnregisteredType {}
 
         [Fact]
