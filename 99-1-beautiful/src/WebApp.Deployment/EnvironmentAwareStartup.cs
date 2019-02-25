@@ -15,6 +15,8 @@ namespace WebApp.Deployment
         {
             this.logger = logger;
             this.selectedStartup = selectedStartup;
+
+            logger.LogInformation("Will use {startupType} as startup type.", selectedStartup.GetType().FullName);
         }
 
         public void Configure(IApplicationBuilder app) { selectedStartup.Configure(app); }

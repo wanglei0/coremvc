@@ -29,6 +29,39 @@ namespace WebApp.Deployment
             configure(environmentAwareBuilder);
             return environmentAwareBuilder.EndEnvironment();
         }
+        
+        public static IWebHostBuilder WithWebHostBuilder(
+            this IWebHostBuilder builder,
+            Func<IHostingEnvironment, bool> isEnvironmentSupported,
+            Type configuratorType)
+        {
+            if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
+            if (isEnvironmentSupported == null) { throw new ArgumentNullException(nameof(isEnvironmentSupported)); }
+            if (configuratorType == null) { throw new ArgumentNullException(nameof(configuratorType)); }
+
+            Type configuratorInterfaceType = typeof(IEnvironmentSpecificWebHostConfigurator);
+            if (!configuratorInterfaceType.IsAssignableFrom(configuratorType) || 
+                configuratorType.IsAbstract ||
+                !configuratorType.IsClass)
+            {
+                throw new ArgumentException(
+                    $"The {configuratorType.FullName} must implement {configuratorInterfaceType.FullName}. And should be able to instantiate.");
+            }
+
+            var configurator = (IEnvironmentSpecificWebHostConfigurator)Activator.CreateInstance(configuratorType);
+
+            return builder.WithWebHostBuilder(
+                isEnvironmentSupported,
+                configurator.Configure);
+        }
+        
+        public static IWebHostBuilder WithWebHostBuilder<TConfigurator>(
+            this IWebHostBuilder builder,
+            Func<IHostingEnvironment, bool> isEnvironmentSupported)
+            where TConfigurator : IEnvironmentSpecificWebHostConfigurator
+        {
+            return builder.WithWebHostBuilder(isEnvironmentSupported, typeof(TConfigurator));
+        }
 
         public static IWebHostBuilder UseEnvironmentAwareStartup(
             this IWebHostBuilder builder,
