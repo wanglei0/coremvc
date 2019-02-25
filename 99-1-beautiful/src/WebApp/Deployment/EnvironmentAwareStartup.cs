@@ -9,7 +9,9 @@ namespace WebApp.Deployment
         readonly ILogger<EnvironmentAwareStartup> logger;
         readonly IEnvironmentSpecificStartup selectedStartup;
 
-        public EnvironmentAwareStartup(ILogger<EnvironmentAwareStartup> logger, IEnvironmentSpecificStartup selectedStartup)
+        public EnvironmentAwareStartup(
+            ILogger<EnvironmentAwareStartup> logger, 
+            IEnvironmentSpecificStartup selectedStartup)
         {
             this.logger = logger;
             this.selectedStartup = selectedStartup;

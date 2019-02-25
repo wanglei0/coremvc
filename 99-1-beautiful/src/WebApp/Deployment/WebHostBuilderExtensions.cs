@@ -50,6 +50,41 @@ namespace WebApp.Deployment
             
             return builder;
         }
+        
+        public static IWebHostBuilder UseEnvironmentAwareStartup(
+            this IWebHostBuilder builder,
+            params (Func<IHostingEnvironment, bool> isEnvironmentSupported, Type environmentStartupType)[] startupConfigs)
+        {
+            if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
+            ValidateStartupConfigs(startupConfigs);
+
+            builder.ConfigureServices(
+                (c, s) =>
+                {
+                    foreach (var startupConfig in startupConfigs)
+                    {
+                        if (startupConfig.isEnvironmentSupported(c.HostingEnvironment))
+                        {
+                            s.AddSingleton(typeof(IEnvironmentSpecificStartup), startupConfig.environmentStartupType);
+                        }
+                    }
+                }).UseStartup<EnvironmentAwareStartup>();
+
+            return builder;
+        }
+
+        static void ValidateStartupConfigs(
+            (Func<IHostingEnvironment, bool> isEnvironmentSupported, Type environmentStartupType)[] startupConfigs)
+        {
+            if (startupConfigs == null) { throw new ArgumentNullException(nameof(startupConfigs)); }
+
+            if (startupConfigs.Any(startupConfig =>
+                startupConfig.isEnvironmentSupported == null || startupConfig.environmentStartupType == null))
+            {
+                throw new ArgumentException(
+                    $"The environment specific startup must provide environment prediction and startup type.");
+            }
+        }
 
         static void ValidateStartupConfigs(
             (
