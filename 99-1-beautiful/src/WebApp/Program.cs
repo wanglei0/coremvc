@@ -11,8 +11,8 @@ namespace WebApp
         {
             return new WebHostBuilder()
                 .UseKestrel()
-                .WithWebHostBuilder<DevWebHostConfigurator>(h => h.IsDevelopment())
-                .WithWebHostBuilder<ProdWebHostConfigurator>(h => h.IsProduction())
+                .WithWebHostBuilder<DevWebHostConfigurator>(EnvironmentName.Development)
+                .WithWebHostBuilder<ProdWebHostConfigurator>(EnvironmentName.Production)
                 .UseEnvironmentAwareStartup(
                     (EnvironmentName.Development, typeof(DevStartup)),
                     (EnvironmentName.Production, typeof(ProductionStartup)));

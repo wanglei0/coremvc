@@ -10,36 +10,33 @@ namespace WebApp.Deployment
     {
         public static IWebHostBuilder WithWebHostBuilder(
             this IWebHostBuilder builder,
-            Func<IHostingEnvironment, bool> isEnvironmentSupported,
+            string environmentName,
             Action<IWebHostBuilder> configure)
         {
-            if (builder == null) {throw new ArgumentNullException(nameof(builder));}
+            if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
+            if (environmentName == null) { throw new ArgumentNullException(nameof(environmentName)); }
+            if (configure == null) { throw new ArgumentNullException(nameof(configure)); }
 
-            if (isEnvironmentSupported == null)
-            {
-                throw new ArgumentNullException(nameof(isEnvironmentSupported));
-            }
-
-            if (configure == null)
-            {
-                throw new ArgumentNullException(nameof(configure));
-            }
-
-            EnvironmentAwareWebHostBuilder environmentAwareBuilder =
-                builder.BeginEnvironment(isEnvironmentSupported);
-            configure(environmentAwareBuilder);
-            return environmentAwareBuilder.EndEnvironment();
+            return WithWebHostBuilderCore(builder, environmentName, configure);
         }
         
+        public static IWebHostBuilder WithWebHostBuilder<T>(
+            this IWebHostBuilder builder,
+            string environmentName)
+            where T : IEnvironmentSpecificWebHostConfigurator
+        {
+            return WithWebHostBuilder(builder, environmentName, typeof(T));
+        }
+
         public static IWebHostBuilder WithWebHostBuilder(
             this IWebHostBuilder builder,
-            Func<IHostingEnvironment, bool> isEnvironmentSupported,
+            string environmentName,
             Type configuratorType)
         {
             if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
-            if (isEnvironmentSupported == null) { throw new ArgumentNullException(nameof(isEnvironmentSupported)); }
+            if (environmentName == null) { throw new ArgumentNullException(nameof(environmentName)); }
             if (configuratorType == null) { throw new ArgumentNullException(nameof(configuratorType)); }
-
+            
             Type configuratorInterfaceType = typeof(IEnvironmentSpecificWebHostConfigurator);
             if (!configuratorInterfaceType.IsAssignableFrom(configuratorType) || 
                 configuratorType.IsAbstract ||
@@ -48,20 +45,9 @@ namespace WebApp.Deployment
                 throw new ArgumentException(
                     $"The {configuratorType.FullName} must implement {configuratorInterfaceType.FullName}. And should be able to instantiate.");
             }
-
+            
             var configurator = (IEnvironmentSpecificWebHostConfigurator)Activator.CreateInstance(configuratorType);
-
-            return builder.WithWebHostBuilder(
-                isEnvironmentSupported,
-                configurator.Configure);
-        }
-        
-        public static IWebHostBuilder WithWebHostBuilder<TConfigurator>(
-            this IWebHostBuilder builder,
-            Func<IHostingEnvironment, bool> isEnvironmentSupported)
-            where TConfigurator : IEnvironmentSpecificWebHostConfigurator
-        {
-            return builder.WithWebHostBuilder(isEnvironmentSupported, typeof(TConfigurator));
+            return WithWebHostBuilderCore(builder, environmentName, configurator.Configure);
         }
 
         public static IWebHostBuilder UseEnvironmentAwareStartup(
@@ -84,6 +70,17 @@ namespace WebApp.Deployment
                 }).UseStartup<EnvironmentAwareStartup>();
 
             return builder;
+        }
+
+        static IWebHostBuilder WithWebHostBuilderCore(
+            this IWebHostBuilder builder,
+            string environmentName,
+            Action<IWebHostBuilder> configure)
+        {
+            EnvironmentAwareWebHostBuilder environmentAwareBuilder =
+                builder.BeginEnvironment(h => h.IsEnvironment(environmentName));
+            configure(environmentAwareBuilder);
+            return environmentAwareBuilder.EndEnvironment();
         }
 
         static void ValidateStartupConfigs(

@@ -19,14 +19,14 @@ namespace WebApp.Infrastructure.Test.Deployment
             new WebHostBuilder()
                 .UseEnvironment(environmentName)
                 .WithWebHostBuilder(
-                    h => h.IsDevelopment(),
+                    EnvironmentName.Development,
                     wb => wb
                         .ConfigureServices(
                             (c, s) => recorder.Record("Development: ConfigureServices(context, services)"))
                         .ConfigureServices(
                             s => recorder.Record("Development: ConfigureServices(services)")))
                 .WithWebHostBuilder(
-                    h => h.IsProduction(),
+                    EnvironmentName.Production,
                     wb => wb
                         .ConfigureServices(
                             (c, s) => recorder.Record("Production: ConfigureServices(context, services)"))
@@ -54,11 +54,11 @@ namespace WebApp.Infrastructure.Test.Deployment
             new WebHostBuilder()
                 .UseEnvironment(environmentName)
                 .WithWebHostBuilder(
-                    h => h.IsDevelopment(),
+                    EnvironmentName.Development,
                     wb => wb.ConfigureAppConfiguration(
                         (c, cb) => recorder.Record("Development: ConfigureAppConfiguration(context, builder)")))
                 .WithWebHostBuilder(
-                    h => h.IsProduction(),
+                    EnvironmentName.Production,
                     wb => wb.ConfigureAppConfiguration(
                         (c, cb) => recorder.Record("Production: ConfigureAppConfiguration(context, builder)")))
                 .UseStartup<NullStartup>()
@@ -70,6 +70,30 @@ namespace WebApp.Infrastructure.Test.Deployment
         }
 
         [Fact]
+        public void should_execute_all_satisfied_web_host_builder_configuration()
+        {
+            var recorder = new SimpleRecorder();
+
+            new WebHostBuilder()
+                .UseEnvironment(EnvironmentName.Development)
+                .WithWebHostBuilder(
+                    EnvironmentName.Development,
+                    wb => wb.ConfigureServices(s => recorder.Record("ConfigureServices for Development - 1")))
+                .WithWebHostBuilder(
+                    EnvironmentName.Development,
+                    wb => wb.ConfigureServices(s => recorder.Record("ConfigureServices for Development - 2")))
+                .WithWebHostBuilder(
+                    EnvironmentName.Production,
+                    wb => wb.ConfigureServices(s => recorder.Record("ConfigureServices for Production")))
+                .UseStartup<NullStartup>()
+                .Build();
+
+            Assert.Equal(
+                new[] {"ConfigureServices for Development - 1", "ConfigureServices for Development - 2"},
+                recorder.Records);
+        }
+
+        [Fact]
         public void should_be_ok_to_get_settings_under_different_environments()
         {
             string valueFromDevEnv = null;
@@ -78,9 +102,9 @@ namespace WebApp.Infrastructure.Test.Deployment
             new WebHostBuilder()
                 .UseSetting("key", "value")
                 .WithWebHostBuilder(
-                    h => h.IsDevelopment(), wb => valueFromDevEnv = wb.GetSetting("key"))
+                    EnvironmentName.Development, wb => valueFromDevEnv = wb.GetSetting("key"))
                 .WithWebHostBuilder(
-                    h => h.IsProduction(), wb => valueFromProdEnv = wb.GetSetting("key"));
+                    EnvironmentName.Production, wb => valueFromProdEnv = wb.GetSetting("key"));
             
             Assert.Equal("value", valueFromDevEnv);
             Assert.Equal("value", valueFromProdEnv);
@@ -93,7 +117,7 @@ namespace WebApp.Infrastructure.Test.Deployment
 
             Assert.Throws<InvalidOperationException>(
                 () => builder.WithWebHostBuilder(
-                    h => h.IsDevelopment(),
+                    EnvironmentName.Development,
                     wb => wb.UseSetting("key", "value")));
         }
 
@@ -104,9 +128,9 @@ namespace WebApp.Infrastructure.Test.Deployment
 
             Assert.Throws<InvalidOperationException>(
                 () => builder.WithWebHostBuilder(
-                    h => h.IsDevelopment(),
+                    EnvironmentName.Development,
                     wb => wb.WithWebHostBuilder(
-                        h => h.IsProduction(),
+                        EnvironmentName.Production,
                         anotherBuilder => { })));
         }
 
@@ -117,7 +141,7 @@ namespace WebApp.Infrastructure.Test.Deployment
 
             Assert.Throws<InvalidOperationException>(
                 () => builder.WithWebHostBuilder(
-                    h => h.IsDevelopment(),
+                    EnvironmentName.Development,
                     wb => wb.Build()));
         }
     }
