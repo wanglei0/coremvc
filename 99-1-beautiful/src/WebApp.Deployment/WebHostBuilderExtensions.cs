@@ -99,6 +99,7 @@ namespace WebApp.Deployment
                         if (startupConfig.isEnvironmentSupported(c.HostingEnvironment))
                         {
                             s.AddSingleton(typeof(IEnvironmentSpecificStartup), startupConfig.environmentStartupType);
+                            return;
                         }
                     }
                 }).UseStartup<EnvironmentAwareStartup>();

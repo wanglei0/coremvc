@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using WebApp.Deployment;
 
 namespace WebApp
@@ -12,13 +11,11 @@ namespace WebApp
         {
             return new WebHostBuilder()
                 .UseKestrel()
-                .ConfigureLogging(lb => lb.AddConsole().SetMinimumLevel(LogLevel.Debug))
-                .ConfigureLogging(lb => lb.AddConsole().SetMinimumLevel(LogLevel.Warning))
-//                .WithWebHostBuilder<DevWebHostConfigurator>(h => h.IsDevelopment())
-//                .WithWebHostBuilder<ProdWebHostConfigurator>(h => h.IsProduction())
+                .WithWebHostBuilder<DevWebHostConfigurator>(h => h.IsDevelopment())
+                .WithWebHostBuilder<ProdWebHostConfigurator>(h => h.IsProduction())
                 .UseEnvironmentAwareStartup(
                     (h => h.IsDevelopment(), typeof(DevStartup)),
-                    (h => true, typeof(ProductionStartup)));
+                    (h => h.IsProduction(), typeof(ProductionStartup)));
         }
     }
 }
