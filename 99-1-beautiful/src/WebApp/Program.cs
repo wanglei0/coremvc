@@ -14,8 +14,8 @@ namespace WebApp
                 .WithWebHostBuilder<DevWebHostConfigurator>(h => h.IsDevelopment())
                 .WithWebHostBuilder<ProdWebHostConfigurator>(h => h.IsProduction())
                 .UseEnvironmentAwareStartup(
-                    (h => h.IsDevelopment(), typeof(DevStartup)),
-                    (h => h.IsProduction(), typeof(ProductionStartup)));
+                    (EnvironmentName.Development, typeof(DevStartup)),
+                    (EnvironmentName.Production, typeof(ProductionStartup)));
         }
     }
 }

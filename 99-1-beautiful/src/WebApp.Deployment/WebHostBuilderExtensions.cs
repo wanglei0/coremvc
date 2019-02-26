@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace WebApp.Deployment
 {
@@ -65,28 +66,7 @@ namespace WebApp.Deployment
 
         public static IWebHostBuilder UseEnvironmentAwareStartup(
             this IWebHostBuilder builder,
-            params (Func<IHostingEnvironment, bool> isEnvironmentSupported, Func<IServiceProvider, IEnvironmentSpecificStartup> environmentStartupFactory)[] startupConfigs)
-        {
-            if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
-            ValidateStartupConfigs(startupConfigs);
-
-            builder.ConfigureServices((c, s) =>
-            {
-                foreach (var startupConfig in startupConfigs)
-                {
-                    if (startupConfig.isEnvironmentSupported(c.HostingEnvironment))
-                    {
-                        s.AddSingleton(startupConfig.environmentStartupFactory);
-                    }
-                }
-            }).UseStartup<EnvironmentAwareStartup>();
-            
-            return builder;
-        }
-        
-        public static IWebHostBuilder UseEnvironmentAwareStartup(
-            this IWebHostBuilder builder,
-            params (Func<IHostingEnvironment, bool> isEnvironmentSupported, Type environmentStartupType)[] startupConfigs)
+            params (string environmentName, Type environmentStartupType)[] startupConfigs)
         {
             if (builder == null) { throw new ArgumentNullException(nameof(builder)); }
             ValidateStartupConfigs(startupConfigs);
@@ -94,45 +74,33 @@ namespace WebApp.Deployment
             builder.ConfigureServices(
                 (c, s) =>
                 {
-                    foreach (var startupConfig in startupConfigs)
-                    {
-                        if (startupConfig.isEnvironmentSupported(c.HostingEnvironment))
-                        {
-                            s.AddSingleton(typeof(IEnvironmentSpecificStartup), startupConfig.environmentStartupType);
-                            return;
-                        }
-                    }
+                    Type startupType = startupConfigs
+                        .Where(cfg => c.HostingEnvironment.IsEnvironment(cfg.environmentName))
+                        .Select(cfg => cfg.environmentStartupType)
+                        .SingleOrDefault();
+                    if (startupType == null) { return; }
+
+                    s.AddSingleton(typeof(IEnvironmentSpecificStartup), startupType);
                 }).UseStartup<EnvironmentAwareStartup>();
 
             return builder;
         }
 
         static void ValidateStartupConfigs(
-            (Func<IHostingEnvironment, bool> isEnvironmentSupported, Type environmentStartupType)[] startupConfigs)
+            (string environmentName, Type environmentStartupType)[] startupConfigs)
         {
             if (startupConfigs == null) { throw new ArgumentNullException(nameof(startupConfigs)); }
 
             if (startupConfigs.Any(startupConfig =>
-                startupConfig.isEnvironmentSupported == null || startupConfig.environmentStartupType == null))
+                startupConfig.environmentName == null || startupConfig.environmentStartupType == null))
             {
                 throw new ArgumentException(
-                    $"The environment specific startup must provide environment prediction and startup type.");
+                    "The environment specific startup must provide environment prediction and startup type.");
             }
-        }
-
-        static void ValidateStartupConfigs(
-            (
-                Func<IHostingEnvironment, bool> isEnvironmentSupported,
-                Func<IServiceProvider, IEnvironmentSpecificStartup> environmentStartupFactory
-            )[] startupConfigs)
-        {
-            if (startupConfigs == null) { throw new ArgumentNullException(nameof(startupConfigs)); }
-
-            if (startupConfigs.Any(startupConfig =>
-                startupConfig.isEnvironmentSupported == null || startupConfig.environmentStartupFactory == null))
+            
+            if (startupConfigs.Select(c => c.environmentName).ContainsDuplication(StringComparer.OrdinalIgnoreCase))
             {
-                throw new ArgumentException(
-                    $"The environment specific startup must provide environment prediction and factory method.");
+                throw new ArgumentException("The environment name should be unique");
             }
         }
 
