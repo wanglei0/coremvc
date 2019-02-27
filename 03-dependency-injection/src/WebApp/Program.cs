@@ -22,13 +22,7 @@ namespace WebApp
         {
             return new WebHostBuilder()         
                 .UseKestrel()
-                .ConfigureServices(AddTypesToServices)
                 .UseStartup<Startup>(); 
-        }
-
-        static void AddTypesToServices(IServiceCollection services)
-        {
-            services.AddLogging(lb => lb.AddConsole().SetMinimumLevel(LogLevel.Debug));
         }
     }
 }
