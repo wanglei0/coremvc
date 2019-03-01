@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WebApp.Deployment
+namespace WebApp.Deployment.Initialization
 {
     static class EnumerableExtensions
     {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace WebApp.Deployment
 {
-    public interface IEnvironmentSpecificStartup
+    public interface IStartupForEnvironment
     {
         void Configure(IApplicationBuilder app);
         void ConfigureServices(IServiceCollection services);

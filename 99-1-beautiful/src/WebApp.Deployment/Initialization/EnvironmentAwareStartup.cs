@@ -2,20 +2,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace WebApp.Deployment
+namespace WebApp.Deployment.Initialization
 {
-    public class EnvironmentAwareStartup
+    class EnvironmentAwareStartup
     {
-        readonly ILogger<EnvironmentAwareStartup> logger;
-        readonly IEnvironmentSpecificStartup selectedStartup;
+        readonly IStartupForEnvironment selectedStartup;
 
         public EnvironmentAwareStartup(
             ILogger<EnvironmentAwareStartup> logger, 
-            IEnvironmentSpecificStartup selectedStartup)
+            IStartupForEnvironment selectedStartup)
         {
-            this.logger = logger;
             this.selectedStartup = selectedStartup;
-
+            
             logger.LogInformation("Will use {startupType} as startup type.", selectedStartup.GetType().FullName);
         }
 

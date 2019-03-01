@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Deployment
 {
-    class DevWebHostConfigurator : IEnvironmentSpecificWebHostConfigurator
+    class DevWebHostConfigurator : IWebHostConfiguratorForEnvironment
     {
         public void Configure(IWebHostBuilder builder)
         {

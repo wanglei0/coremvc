@@ -4,7 +4,7 @@ using WebApp.Deployment;
 
 namespace WebApp.Infrastructure.Test.Deployment.Helpers
 {
-    class DelegatedWebHostConfigurator : IEnvironmentSpecificWebHostConfigurator
+    class DelegatedWebHostConfigurator : IWebHostConfiguratorForEnvironment
     {
         readonly Action<IWebHostBuilder> configure;
 
@@ -15,7 +15,7 @@ namespace WebApp.Infrastructure.Test.Deployment.Helpers
         
         public void Configure(IWebHostBuilder builder) { configure(builder); }
 
-        public static IEnvironmentSpecificWebHostConfigurator Create(Action<IWebHostBuilder> configure)
+        public static IWebHostConfiguratorForEnvironment Create(Action<IWebHostBuilder> configure)
         {
             return new DelegatedWebHostConfigurator(configure);
         }

@@ -11,11 +11,15 @@ namespace WebApp
         {
             return new WebHostBuilder()
                 .UseKestrel()
-                .WithWebHostBuilder<DevWebHostConfigurator>(EnvironmentName.Development)
-                .WithWebHostBuilder<ProdWebHostConfigurator>(EnvironmentName.Production)
-                .UseEnvironmentAwareStartup(
-                    (EnvironmentName.Development, typeof(DevStartup)),
-                    (EnvironmentName.Production, typeof(ProductionStartup)));
+                .ConfigureEnvironment(
+                    (
+                        EnvironmentName.Development,
+                        EnvironmentSetup.Create<DevWebHostConfigurator, DevStartup>()
+                    ),
+                    (
+                        EnvironmentName.Production,
+                        EnvironmentSetup.Create<ProdWebHostConfigurator, ProductionStartup>()
+                    ));
         }
     }
 }

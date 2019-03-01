@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
 
-namespace WebApp.Deployment
+namespace WebApp.Deployment.Initialization
 {
     class DelegatedWebHostBuilder : EnvironmentAwareWebHostBuilder
     {

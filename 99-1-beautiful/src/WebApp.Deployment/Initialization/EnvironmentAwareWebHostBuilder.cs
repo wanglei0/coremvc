@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WebApp.Deployment
+namespace WebApp.Deployment.Initialization
 {
     abstract class EnvironmentAwareWebHostBuilder : IWebHostBuilder
     {
-        public IWebHostBuilder UnderlyingBuilder { get; }
+        IWebHostBuilder UnderlyingBuilder { get; }
 
         protected abstract bool IsSupported(IHostingEnvironment hostingEnvironment);
 

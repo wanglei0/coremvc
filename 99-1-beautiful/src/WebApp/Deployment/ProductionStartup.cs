@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Deployment
 {
-    class ProductionStartup : IEnvironmentSpecificStartup
+    class ProductionStartup : IStartupForEnvironment
     {
         public void Configure(IApplicationBuilder app)
         {

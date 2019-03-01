@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace WebApp.Deployment
 {
-    public interface IEnvironmentSpecificWebHostConfigurator
+    public interface IWebHostConfiguratorForEnvironment
     {
         void Configure(IWebHostBuilder builder);
     }
