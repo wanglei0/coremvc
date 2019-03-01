@@ -1,14 +1,21 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace WebApp.Deployment
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     class DevWebHostConfigurator : IWebHostConfiguratorForEnvironment
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureLogging(
-                (c, lb) => lb.AddConfiguration(c.Configuration).AddConsole().SetMinimumLevel(LogLevel.Debug));
+            builder.UseSerilog(
+                (ctx, logBuilder) =>
+                {
+                    logBuilder
+                        .MinimumLevel.Debug()
+                        .WriteTo.Console();
+                });
         }
     }
 }

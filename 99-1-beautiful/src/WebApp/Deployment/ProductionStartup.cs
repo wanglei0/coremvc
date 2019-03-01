@@ -9,12 +9,7 @@ namespace WebApp.Deployment
     {
         public void Configure(IApplicationBuilder app)
         {
-            app.Run(c =>
-            {
-                var logger = c.RequestServices.GetService<ILogger<ProductionStartup>>();
-                logger.LogWarning("Hello Warning!");
-                return c.Response.WriteAsync("Hello Production");
-            });
+            app.Run(c => c.Response.WriteAsync("Hello Production"));
         }
 
         public void ConfigureServices(IServiceCollection services) { }
