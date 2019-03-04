@@ -265,7 +265,10 @@ namespace WebApp.Infrastructure.Test.Deployment
                 this.recorder = recorder;
             }
 
-            public void Configure(IApplicationBuilder app) { recorder.Record($"{GetType().Name}.{nameof(Configure)}"); }
+            public void Configure(IApplicationBuilder app, IServiceProvider scopedProvider)
+            {
+                recorder.Record($"{GetType().Name}.{nameof(Configure)}");
+            }
 
             public void ConfigureServices(IServiceCollection services)
             {
