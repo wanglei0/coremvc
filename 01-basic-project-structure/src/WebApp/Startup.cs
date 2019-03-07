@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace WebApp
 {
@@ -19,7 +20,14 @@ namespace WebApp
         {
             // This method gets called by the runtime. Use this method to add services to
             // the container.
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+//                .AddLogging(builder => { 
+//                    builder
+//                    .AddFilter("Microsoft", LogLevel.Debug)
+//                    .AddConsole(); 
+//                })
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
