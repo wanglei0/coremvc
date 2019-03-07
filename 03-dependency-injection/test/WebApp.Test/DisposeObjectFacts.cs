@@ -7,13 +7,6 @@ namespace WebApp.Test
 {
     public class DisposeObjectFacts
     {
-        class Disposable : IDisposable
-        {
-            public bool IsDisposed { get; private set; }
-
-            public void Dispose() => IsDisposed = true;
-        }
-        
         [Fact]
         public void should_dispose_object_when_root_provider_is_disposed()
         {
@@ -185,6 +178,40 @@ namespace WebApp.Test
             // Then
             Assert.Throws<ObjectDisposedException>(
                 () => scope.ServiceProvider.GetService<Disposable>());
+        }
+
+        [Fact]
+        public void should_not_dispose_singleton_instance_from_child_scope()
+        {
+            // Given
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<Disposable>();
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+            IServiceScope scope = provider.CreateScope();
+
+            // When
+            var disposable = scope.ServiceProvider.GetService<Disposable>();
+            scope.Dispose();
+            
+            // Then
+            Assert.False(disposable.IsDisposed);
+        }
+        
+        [Fact]
+        public void should_dispose_singleton_instance_from_root_scope()
+        {
+            // Given
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<Disposable>();
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+            IServiceScope scope = provider.CreateScope();
+
+            // When
+            var disposable = scope.ServiceProvider.GetService<Disposable>();
+            provider.Dispose();
+            
+            // Then
+            Assert.True(disposable.IsDisposed);
         }
     }
 }
