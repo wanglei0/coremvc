@@ -13,7 +13,7 @@ namespace WebApp
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
+            app.Run(async context => { await context.Response.WriteAsync("Hello World!"); });
         }
     }
 }
