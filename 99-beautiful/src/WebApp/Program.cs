@@ -6,7 +6,7 @@ namespace WebApp
     {
         public static void Main(string[] args)
         {
-            new WebAppHostBuilderFactory().Create(args).Build().Run();
+            new AppWebHostBuilderFactory().Create(args).Build().Run();
         }
     }
 }

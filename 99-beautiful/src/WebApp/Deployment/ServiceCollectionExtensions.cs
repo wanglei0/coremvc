@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -9,6 +10,7 @@ namespace WebApp.Deployment
 {
     static class ServiceCollectionExtensions
     {
+        [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Fluent API")]
         public static IServiceCollection AddSerilog(
             this IServiceCollection services,
             Action<LoggerConfiguration> configure)

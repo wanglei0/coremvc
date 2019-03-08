@@ -1,19 +1,19 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Serilog;
 using WebApp.Deployment;
 
 namespace WebApp
 {
-    public class WebAppHostBuilderFactory
+    public class AppWebHostBuilderFactory
     {
         readonly WebHostConfiguratorFactory configuratorFactory;
 
-        public WebAppHostBuilderFactory() : this(new WebHostConfiguratorFactory())
+        public AppWebHostBuilderFactory() : this(new AppConfiguratorFactory())
         {
         }
         
-        public WebAppHostBuilderFactory(WebHostConfiguratorFactory configuratorFactory)
+        public AppWebHostBuilderFactory(WebHostConfiguratorFactory configuratorFactory)
         {
             this.configuratorFactory = configuratorFactory;
         }
@@ -22,6 +22,10 @@ namespace WebApp
         {
             return new WebHostBuilder()
                 .UseKestrel(ko => ko.AddServerHeader = false)
+                //
+                // Warning: not suitable for IIS integration. Please call UseIISIntegration() and UseIIS() instead.
+                //
+                .UseContentRoot(Environment.CurrentDirectory)
                 .ConfigureAppConfiguration(cb => cb.AddCommandLine(args))
                 .ConfigureServices((context, services) =>
                     configuratorFactory.Create(context.HostingEnvironment.EnvironmentName)

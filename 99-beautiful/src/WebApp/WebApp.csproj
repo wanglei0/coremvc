@@ -16,4 +16,8 @@
       <Folder Include="Properties" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\WebApp.Deployment\WebApp.Deployment.csproj" />
+    </ItemGroup>
+
 </Project>
