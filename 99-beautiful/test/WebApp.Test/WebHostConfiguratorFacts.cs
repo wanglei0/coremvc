@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.Deployment;
 using Xunit;
@@ -29,6 +30,11 @@ namespace WebApp.Test
             public void ConfigureLogging(WebHostBuilderContext context, IServiceCollection services)
             {
                 Record(nameof(ConfigureLogging));
+            }
+
+            public void ConfigureConfiguration(WebHostBuilderContext context, IConfigurationBuilder configurationBuilder)
+            {
+                Record(nameof(ConfigureConfiguration));
             }
 
             void Record(string message)

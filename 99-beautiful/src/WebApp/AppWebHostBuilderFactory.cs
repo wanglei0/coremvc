@@ -26,7 +26,12 @@ namespace WebApp
                 // Warning: not suitable for IIS integration. Please call UseIISIntegration() and UseIIS() instead.
                 //
                 .UseContentRoot(Environment.CurrentDirectory)
-                .ConfigureAppConfiguration(cb => cb.AddCommandLine(args))
+                .ConfigureAppConfiguration((context, cb) =>
+                {
+                    configuratorFactory.Create(context.HostingEnvironment.EnvironmentName)
+                        .ConfigureConfiguration(context, cb);
+                    cb.AddCommandLine(args);
+                })
                 .ConfigureServices((context, services) =>
                     configuratorFactory.Create(context.HostingEnvironment.EnvironmentName)
                         .ConfigureLogging(context, services))
