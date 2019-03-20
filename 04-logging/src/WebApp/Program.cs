@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Hosting;
+using Serilog;
+using Serilog.Core;
 
 namespace WebApp
 {
@@ -10,21 +12,31 @@ namespace WebApp
             CreateWebHostBuilder(args).Build().Run();
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
                 .UseKestrel()
-                .ConfigureLogging((context, logBuilder) => {
-                    if (context.HostingEnvironment.IsDevelopment()) {
-                        logBuilder
-                            .SetMinimumLevel(LogLevel.Debug)
-                            .AddConsole();
+                .ConfigureLogging((context, loggerBuilder) =>
+                {
+                    Logger logger;
+                    
+                    if (context.HostingEnvironment.IsDevelopment())
+                    {
+                        logger = new LoggerConfiguration()
+                            .MinimumLevel.Debug()
+                            .WriteTo.Console()
+                            .CreateLogger();
                     }
-                    if (context.HostingEnvironment.IsProduction()) {
-                        logBuilder
-                            .SetMinimumLevel(LogLevel.Warning)
-                            .AddConsole();
+                    else
+                    {
+                        logger = new LoggerConfiguration()
+                            .MinimumLevel.Warning()
+                            .WriteTo.Console()
+                            .CreateLogger();
                     }
+
+                    loggerBuilder.AddSerilog(logger);
                 })
                 .UseStartup<Startup>();
         }
