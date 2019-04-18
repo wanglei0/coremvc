@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentNHibernate">
+      <Version>2.1.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="NHibernate">
+      <Version>5.2.5</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
