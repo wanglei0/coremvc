@@ -6,6 +6,7 @@ using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;
 using NHibernate.Tool.hbm2ddl;
+using WebApp.Resources.Repository.Models;
 
 namespace WebApp.Resources
 {
