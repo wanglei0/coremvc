@@ -34,7 +34,8 @@ namespace WebApp
 //                .ConfigureLogging((context, logBuilder) => { logBuilder.AddConsole(); })
                 .ConfigureServices(collection =>
                     {
-                        collection.AddTransient<IUsersRepository, UsersRepository>();
+                        collection.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+                        collection.AddTransient<UsersRepository>();
                         collection.AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>();
                         collection.AddTransient<DatabaseModel>();
                         collection.AddTransient<SqlStatementInterceptor>();

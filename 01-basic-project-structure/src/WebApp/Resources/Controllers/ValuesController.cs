@@ -12,24 +12,24 @@ namespace WebApp.Resources.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IUsersRepository _usersRepository;
-        public ValuesController(ILogger<ValuesController> logger, IUsersRepository usersRepository)
+        private readonly IBaseRepository<Users> repo;
+        public ValuesController(ILogger<ValuesController> logger, IBaseRepository repo)
         {
             _logger = logger;
-            _usersRepository = usersRepository;
+            repo = repo;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            var guid = _usersRepository.Save();
+            var user = repo.Insert(user);
 //            _usersRepository.Delete<Users>(Guid.Parse("CBFE2138-B8BB-4F71-B1D1-4043874F15A8"));
-            _logger.Log(LogLevel.Error, "here is the user id {0}", guid);
+            _logger.Log(LogLevel.Error, "here is the user id {0}", user);
 
-            var user = _usersRepository.Get(guid);
+            var user = repo.GetById(user.Id);
             _logger.Log(LogLevel.Error, "here is the user id: {0}, user firstname: {1}", user.Id, user.FirstName);
            
-            _usersRepository.Delete<Users>(guid);
+            repo.Delete(user.Id);
 
             _logger.Log(LogLevel.Error, "here is the log in {currentMethod}", nameof(Get));
             return new[] { "value1", "value2" };

@@ -1,23 +1,24 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
 using WebApp.Resources.Providers;
 using WebApp.Resources.Repository.Models;
 
 namespace WebApp.Resources.Repository
 {
-    public interface IUsersRepository
-    {
-        Guid Save();
-        Users Get(Guid id);
-        void Delete<Users>(Guid id);
-    }
-    public class UsersRepository : IUsersRepository
+//    public interface IUsersRepository
+//    {
+//        Guid Save();
+//        Users Get(Guid id);
+//        void Delete<Users>(Guid id);
+//    }
+    public class UsersRepository : BaseRepository<Users>
     {
         IDatabaseSessionProvider DatabaseSessionProvider { get; }
         
-        public UsersRepository(IDatabaseSessionProvider dbSessionProvider)
+        public UsersRepository(IDatabaseSessionProvider databaseSessionProvider) : base(databaseSessionProvider)
         {
-            DatabaseSessionProvider = dbSessionProvider;
+            DatabaseSessionProvider = databaseSessionProvider;
         }
 
         public Guid Save()
@@ -25,15 +26,6 @@ namespace WebApp.Resources.Repository
             var user = new Users();
             using (var session = DatabaseSessionProvider.OpenSession())
             {
-//                var user = session
-//                    .Query<Users>()
-//                    .FirstOrDefault(u => u.Id == EXISTING.Id);
-//
-//                if (user != null)
-//                {
-//                    return;
-//                }
-
                 session.Save(user);
                 session.Flush();
             }
