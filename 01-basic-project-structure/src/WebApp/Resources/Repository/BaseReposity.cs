@@ -33,24 +33,16 @@ namespace WebApp.Resources.Repository
 
         public T Insert(T entity)
         {
-            try
+            using (ISession Session = DatabaseSessionProvider.OpenSession())
             {
-                using (ISession Session = DatabaseSessionProvider.OpenSession())
+                using (ITransaction Transaction = Session.BeginTransaction())
                 {
-                    using (ITransaction Transaction = Session.BeginTransaction())
-                    {
-                        Session.Save(entity);
-                        Transaction.Commit();
-                    }
+                    Session.Save(entity);
+                    Session.Flush();
                 }
-
-                return entity;
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+            return entity;
         }
 
         public void Update(T entity)

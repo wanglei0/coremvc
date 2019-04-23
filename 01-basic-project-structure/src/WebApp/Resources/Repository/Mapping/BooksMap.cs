@@ -13,7 +13,7 @@ namespace WebApp.Resources.Repository.Mapping
             Map(x => x.Name).Not.Nullable();
             Map(x => x.LastModified).Not.Nullable();
             
-            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
+//            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
         }
     }
 }

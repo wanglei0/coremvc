@@ -13,11 +13,11 @@ namespace WebApp.Resources.Repository
     
     public class BooksRepository : BaseRepository<Books>
     {
-        IDatabaseSessionProvider DatabaseSessionProvider { get; }
+//        IDatabaseSessionProvider DatabaseSessionProvider { get; }
         
         public BooksRepository(IDatabaseSessionProvider databaseSessionProvider) : base(databaseSessionProvider)
         {
-            DatabaseSessionProvider = databaseSessionProvider;
+//            DatabaseSessionProvider = databaseSessionProvider;
         }
     }
 }

@@ -14,11 +14,11 @@ namespace WebApp.Resources.Repository
     
     public class UserInfoRepository : BaseRepository<UserInfo>
     {
-        IDatabaseSessionProvider DatabaseSessionProvider { get; }
+//        IDatabaseSessionProvider DatabaseSessionProvider { get; }
         
         public UserInfoRepository(IDatabaseSessionProvider databaseSessionProvider) : base(databaseSessionProvider)
         {
-            DatabaseSessionProvider = databaseSessionProvider;
+//            DatabaseSessionProvider = databaseSessionProvider;
         }
     }
 }

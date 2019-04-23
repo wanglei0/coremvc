@@ -13,7 +13,7 @@ namespace WebApp.Resources.Repository.Mapping
             Map(x => x.Email).Not.Nullable();
             Map(x => x.Address).Not.Nullable();
             
-            HasOne<Users>(u　=>　u.UserId).Cascade.All().PropertyRef("Id");
+//            HasOne<Users>(u　=>　u.UserId).Cascade.All().PropertyRef("Id");
         }
     }
 }

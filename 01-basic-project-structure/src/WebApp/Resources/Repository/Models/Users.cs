@@ -4,11 +4,12 @@ namespace WebApp.Resources.Repository.Models
 {
     public class Users
     {
-        public Users()
+        public Users(){}
+        public Users(string firstName, string lastName)
         {
             Id = Guid.NewGuid();
-            FirstName = "firstName";
-            LastName = "lastName";
+            FirstName = firstName;
+            LastName = lastName;
             LastModified = DateTime.Now;
         }
         public virtual Guid Id { get; set; }

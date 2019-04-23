@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebApp.Models.Dtos;
 using WebApp.Resources.Repository;
 using WebApp.Resources.Repository.Models;
 
@@ -10,18 +11,22 @@ namespace WebApp.Resources.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IBaseRepository<Users> repo;
+        private readonly IBaseRepository<Users> _repo;
 
         public UsersController(ILogger<ValuesController> logger, IBaseRepository<Users> repo)
         {
             _logger = logger;
-            repo = repo;
+            _repo = repo;
         }
 
-        [HttpGet]
-        public ActionResult Save()
+        [HttpPost("create")]
+        public ActionResult CreateUser([FromBody] UsersDto user)
         {
-            Request.Body.
+            var tempUser = new Users(user.FirstName, user.LastName);
+
+            var result = _repo.Insert(tempUser);
+
+            return Ok(result.LastName);
         }
     }
 }

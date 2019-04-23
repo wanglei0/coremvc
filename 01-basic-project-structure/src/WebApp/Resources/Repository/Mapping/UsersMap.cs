@@ -14,8 +14,8 @@ namespace WebApp.Resources.Repository.Mapping
             Map(x => x.LastName).Not.Nullable();
             Map(x => x.LastModified).Not.Nullable();
             
-            HasOne<UserInfo>(u　=>　u.Id).Cascade.All().PropertyRef("UserId");
-            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
+//            HasOne<UserInfo>(u　=>　u.Id).Cascade.All().PropertyRef("UserId");
+//            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
         }
     }
 }

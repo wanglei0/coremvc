@@ -4,6 +4,8 @@ namespace WebApp.Resources.Repository.Models
 {
     public class Books
     {
+        public Books(){}
+
         public Books(Guid userId, string name)
         {
             Id = Guid.NewGuid();

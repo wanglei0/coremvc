@@ -4,6 +4,8 @@ namespace WebApp.Resources.Repository.Models
 {
     public class UserInfo
     {
+        public UserInfo(){}
+
         public UserInfo(Guid userid, string email, string address)
         {
             Id = Guid.NewGuid();
