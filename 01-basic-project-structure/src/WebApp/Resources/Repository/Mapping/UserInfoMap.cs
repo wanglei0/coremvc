@@ -7,7 +7,7 @@ namespace WebApp.Resources.Repository.Mapping
     {
         public UserInfoMap()
         {
-            Table("users");
+            Table("UserInfo");
             Id(x => x.Id).GeneratedBy.Assigned();
             Map(x => x.UserId).Not.Nullable();
             Map(x => x.Email).Not.Nullable();

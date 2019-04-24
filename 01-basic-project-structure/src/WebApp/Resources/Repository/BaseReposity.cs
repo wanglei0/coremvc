@@ -35,11 +35,9 @@ namespace WebApp.Resources.Repository
         {
             using (ISession Session = DatabaseSessionProvider.OpenSession())
             {
-                using (ITransaction Transaction = Session.BeginTransaction())
-                {
+                
                     Session.Save(entity);
                     Session.Flush();
-                }
             }
 
             return entity;

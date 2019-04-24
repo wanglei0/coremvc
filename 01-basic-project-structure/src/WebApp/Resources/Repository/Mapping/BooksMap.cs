@@ -7,13 +7,13 @@ namespace WebApp.Resources.Repository.Mapping
     {
         public BooksMap()
         {
-            Table("users");
+            Table("Books");
             Id(x => x.Id).GeneratedBy.Assigned();
-            Map(x => x.UserId).Not.Nullable();
-            Map(x => x.Name).Not.Nullable();
-            Map(x => x.LastModified).Not.Nullable();
+            Map(x => x.user_id).Not.Nullable();
+            Map(x => x.name).Not.Nullable();
+            Map(x => x.last_modified).Not.Nullable();
             
-//            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
+//            References(x => x.User).Column("user_id").Not.LazyLoad();
         }
     }
 }

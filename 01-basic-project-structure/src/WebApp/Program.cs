@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using WebApp.Resources;
 using WebApp.Resources.Providers;
 using WebApp.Resources.Repository;
+using WebApp.Resources.Repository.Models;
 
 namespace WebApp
 {
@@ -39,6 +40,7 @@ namespace WebApp
                         collection.AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>();
                         collection.AddTransient<DatabaseModel>();
                         collection.AddTransient<SqlStatementInterceptor>();
+                        collection.AddTransient<Users>();
                     })
                     .UseStartup<Startup>();
         }

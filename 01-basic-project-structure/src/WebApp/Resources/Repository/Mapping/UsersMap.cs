@@ -8,14 +8,17 @@ namespace WebApp.Resources.Repository.Mapping
     {
         public UsersMap()
         {
-            Table("users");
+            Table("Users");
             Id(x => x.Id).GeneratedBy.Assigned();
             Map(x => x.FirstName).Not.Nullable();
             Map(x => x.LastName).Not.Nullable();
             Map(x => x.LastModified).Not.Nullable();
             
 //            HasOne<UserInfo>(u　=>　u.Id).Cascade.All().PropertyRef("UserId");
-//            HasMany<Books>(h => h.Id).LazyLoad().AsSet().KeyColumn("UserId").Cascade.All().Inverse();
+
+
+            HasMany(h => h.Books).Table("books").KeyColumn("user_id").Not.LazyLoad();
+//            HasMany(x => x.Books).Not.LazyLoad();
         }
     }
 }

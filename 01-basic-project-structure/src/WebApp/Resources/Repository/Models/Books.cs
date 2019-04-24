@@ -6,16 +6,10 @@ namespace WebApp.Resources.Repository.Models
     {
         public Books(){}
 
-        public Books(Guid userId, string name)
-        {
-            Id = Guid.NewGuid();
-            UserId = userId;
-            Name = name;
-            LastModified = DateTime.Now;
-        }
         public virtual Guid Id { get; set; }
-        public virtual Guid UserId { get; set; }
-        public virtual string Name { get; set; }
-        public virtual DateTime LastModified { get; set; }
+        public virtual string user_id { get; set; }
+        public virtual string name { get; set; }
+        public virtual DateTime last_modified { get; set; }
+        public virtual Users User { get; set; }
     }
 }
