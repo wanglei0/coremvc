@@ -31,9 +31,8 @@ namespace WebApp.Resources.Controllers
 
             var result = _repo.Insert(_user);
 
-            var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
-//            var b = u.Books.ToList();
-            return Ok();
+            var u = _repo.GetById(Guid.Parse("76924659-EFFE-4E1B-A415-2E9965FD771A"));
+            return Ok(u);
         }
     }
 }

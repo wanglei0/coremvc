@@ -9,7 +9,7 @@ namespace WebApp.Resources.Repository.Mapping
         {
             Table("UserInfo");
             Id(x => x.Id).GeneratedBy.Assigned();
-            Map(x => x.UserId).Not.Nullable();
+            Map(x => x.user_id).Not.Nullable();
             Map(x => x.Email).Not.Nullable();
             Map(x => x.Address).Not.Nullable();
             

@@ -14,11 +14,11 @@ namespace WebApp.Resources.Repository.Mapping
             Map(x => x.LastName).Not.Nullable();
             Map(x => x.LastModified).Not.Nullable();
             
-//            HasOne<UserInfo>(u　=>　u.Id).Cascade.All().PropertyRef("UserId");
+            HasOne<UserInfo>(u　=>　u.UserInfo).Cascade.All().PropertyRef(x => x.user_id);
 
 
-            HasMany(h => h.Books).Table("books").KeyColumn("user_id").Not.LazyLoad();
-//            HasMany(x => x.Books).Not.LazyLoad();
+//            HasMany(x => x.Books).Table("books").KeyColumn("user_id").Not.LazyLoad();
+            HasMany(x => x.Books).KeyColumn("user_id").Not.LazyLoad();
         }
     }
 }

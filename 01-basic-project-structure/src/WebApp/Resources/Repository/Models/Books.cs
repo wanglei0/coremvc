@@ -4,8 +4,6 @@ namespace WebApp.Resources.Repository.Models
 {
     public class Books
     {
-        public Books(){}
-
         public virtual Guid Id { get; set; }
         public virtual string user_id { get; set; }
         public virtual string name { get; set; }

@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentMigrator">
+      <Version>3.2.1</Version>
+    </PackageReference>
     <PackageReference Include="FluentNHibernate">
       <Version>2.1.2</Version>
     </PackageReference>
