@@ -32,7 +32,7 @@ namespace WebApp.Resources.Controllers
             var result = _repo.Insert(this.user);
 
             var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
-            return Ok(u);
+            return Ok(result);
         }
     }
 }

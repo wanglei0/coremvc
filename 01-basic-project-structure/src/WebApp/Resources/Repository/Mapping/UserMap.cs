@@ -8,11 +8,11 @@ namespace WebApp.Resources.Repository.Mapping
     {
         public UserMap()
         {
-            Table("User");
+            Table("Users");
             Id(x => x.Id).GeneratedBy.Assigned();
             Map(x => x.FirstName).Not.Nullable();
             Map(x => x.LastName).Not.Nullable();
-            Map(x => x.LastModified).Not.Nullable();
+            Map(x => x.LastModifiedTime).Not.Nullable();
             
             HasOne<UserInfo>(u　=>　u.UserInfo).Cascade.All().PropertyRef(x => x.UserId);
 
