@@ -12,7 +12,7 @@ namespace WebApp.Resources.Repository
 //        Users Get(Guid id);
 //        void Delete<Users>(Guid id);
 //    }
-    public class UsersRepository : BaseRepository<Users>
+    public class UsersRepository : BaseRepository<User>
     {
 //        IDatabaseSessionProvider DatabaseSessionProvider { get; }
         

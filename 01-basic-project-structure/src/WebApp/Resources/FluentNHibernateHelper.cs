@@ -32,7 +32,7 @@ namespace WebApp.Resources
 
                     m.FluentMappings
 
-                        .AddFromAssemblyOf<Users>())
+                        .AddFromAssemblyOf<User>())
 
                 .ExposeConfiguration(cfg => new SchemaExport(cfg)
 

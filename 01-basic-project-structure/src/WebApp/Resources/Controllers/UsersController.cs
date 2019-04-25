@@ -14,24 +14,24 @@ namespace WebApp.Resources.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IBaseRepository<Users> _repo;
-        private Users _user;
+        private readonly IBaseRepository<User> _repo;
+        private User user;
 
-        public UsersController(ILogger<ValuesController> logger, IBaseRepository<Users> repo, Users user)
+        public UsersController(ILogger<ValuesController> logger, IBaseRepository<User> repo, User user)
         {
             _logger = logger;
             _repo = repo;
-            _user = user;
+            this.user = user;
         }
 
         [HttpPost("create")]
         public ActionResult CreateUser([FromBody] UsersDto user)
         {
-            _user.Set(user.FirstName, user.LastName);
+            this.user.Set(user.FirstName, user.LastName);
 
-            var result = _repo.Insert(_user);
+            var result = _repo.Insert(this.user);
 
-            var u = _repo.GetById(Guid.Parse("76924659-EFFE-4E1B-A415-2E9965FD771A"));
+            var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
             return Ok(u);
         }
     }

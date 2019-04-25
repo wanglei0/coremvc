@@ -11,7 +11,7 @@ namespace WebApp.Resources.Repository
 //        void Delete<Users>(Guid id);
 //    }
     
-    public class BooksRepository : BaseRepository<Books>
+    public class BooksRepository : BaseRepository<Book>
     {
 //        IDatabaseSessionProvider DatabaseSessionProvider { get; }
         

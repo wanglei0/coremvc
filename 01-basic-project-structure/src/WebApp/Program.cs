@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore;
+﻿using FluentMigrator.Runner;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebApp.Migrator;
 using WebApp.Resources;
 using WebApp.Resources.Providers;
 using WebApp.Resources.Repository;
@@ -13,8 +15,11 @@ namespace WebApp
     {
         public static void Main(string[] args)
         {
-            
-            CreateWebHostBuilder(args).Build().Run();
+
+            var webHost = CreateWebHostBuilder(args).Build();
+            var runner = webHost.Services.GetService<IMigrationRunner>();
+            runner.MigrateUp();
+                webHost.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
@@ -34,13 +39,14 @@ namespace WebApp
                     .UseKestrel()
 //                .ConfigureLogging((context, logBuilder) => { logBuilder.AddConsole(); })
                 .ConfigureServices(collection =>
-                    {
-                        collection.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-                        collection.AddTransient<UsersRepository>();
-                        collection.AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>();
-                        collection.AddTransient<DatabaseModel>();
-                        collection.AddTransient<SqlStatementInterceptor>();
-                        collection.AddTransient<Users>();
+                {
+                        collection
+                            .AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>))
+                            .AddTransient<UsersRepository>()
+                            .AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>()
+                            .AddTransient<DatabaseModel>()
+                            .AddTransient<SqlStatementInterceptor>()
+                            .AddTransient<User>();
                     })
                     .UseStartup<Startup>();
         }
