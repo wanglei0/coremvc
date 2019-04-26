@@ -1,4 +1,6 @@
-﻿using FluentMigrator.Runner;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,13 +15,14 @@ namespace WebApp
 {
     public static class Program
     {
+        
         public static void Main(string[] args)
         {
 
             var webHost = CreateWebHostBuilder(args).Build();
             var runner = webHost.Services.GetService<IMigrationRunner>();
             runner.MigrateUp();
-                webHost.Run();
+            webHost.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
@@ -37,17 +40,17 @@ namespace WebApp
                         .AddAuthentication(serviceCn => { });
                 })
                     .UseKestrel()
-//                .ConfigureLogging((context, logBuilder) => { logBuilder.AddConsole(); })
-                .ConfigureServices(collection =>
-                {
-                        collection
-                            .AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>))
-                            .AddTransient<UsersRepository>()
-                            .AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>()
-                            .AddTransient<DatabaseModel>()
-                            .AddTransient<SqlStatementInterceptor>()
-                            .AddTransient<User>();
-                    })
+//                .ConfigureServices(collection =>
+//                {
+//                        collection
+//                            .AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>))
+//                            .AddTransient<UserRepository>()
+//                            .AddTransient<IDatabaseSessionProvider, DatabaseSessionProvider>()
+//                            .AddTransient<DatabaseModel>()
+//                            .AddTransient<SqlStatementInterceptor>()
+//                            .AddTransient<User>()
+//                            .AddTransient<TableNameConvention>();
+//                    })
                     .UseStartup<Startup>();
         }
     }

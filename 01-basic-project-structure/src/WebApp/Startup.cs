@@ -1,4 +1,6 @@
-﻿using FluentMigrator.Runner;
+﻿using System;
+using Autofac.Extensions.DependencyInjection;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +20,7 @@ namespace WebApp
 
         IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // This method gets called by the runtime. Use this method to add services to
             // the container.
@@ -39,6 +41,7 @@ namespace WebApp
 //                })
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            return new AutofacServiceProvider(Autofac.Register(services));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

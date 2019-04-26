@@ -25,13 +25,17 @@ namespace WebApp.Resources.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult CreateUser([FromBody] UsersDto user)
+        public ActionResult CreateUser([FromBody] UserDto user)
         {
+            if (user.LastName.Length > 50 || user.FirstName.Length > 50)
+            {
+                return BadRequest("User name too long");
+            }
             this.user.Set(user.FirstName, user.LastName);
 
             var result = _repo.Insert(this.user);
 
-            var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
+//            var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
             return Ok(result);
         }
     }

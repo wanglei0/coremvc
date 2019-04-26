@@ -1,6 +1,9 @@
+using FluentMigrator;
+
 namespace WebApp.Migrator
 {
-    public class M003_CreateUserInfoTable : FluentMigrator.Migration
+    [Migration(003)]
+    public class M003_CreateUserInfoTable : Migration
     {
         public override void Up()
         {

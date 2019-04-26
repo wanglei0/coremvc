@@ -3,7 +3,7 @@ using FluentMigrator;
 namespace WebApp.Migrator
 {
     [Migration(002)]
-    public class M002_CreateBookTable : FluentMigrator.Migration
+    public class M002_CreateBookTable : Migration
     {
         public override void Up()
         {

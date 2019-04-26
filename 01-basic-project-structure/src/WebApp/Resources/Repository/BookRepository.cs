@@ -11,11 +11,11 @@ namespace WebApp.Resources.Repository
 //        void Delete<Users>(Guid id);
 //    }
     
-    public class BooksRepository : BaseRepository<Book>
+    public class BookRepository : BaseRepository<Book>
     {
 //        IDatabaseSessionProvider DatabaseSessionProvider { get; }
         
-        public BooksRepository(IDatabaseSessionProvider databaseSessionProvider) : base(databaseSessionProvider)
+        public BookRepository(IDatabaseSessionProvider databaseSessionProvider) : base(databaseSessionProvider)
         {
 //            DatabaseSessionProvider = databaseSessionProvider;
         }

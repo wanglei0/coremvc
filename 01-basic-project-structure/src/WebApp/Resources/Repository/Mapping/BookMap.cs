@@ -7,7 +7,7 @@ namespace WebApp.Resources.Repository.Mapping
     {
         public BookMap()
         {
-            Table("Books");
+            Table("`Book`");
             Id(x => x.Id).GeneratedBy.Assigned();
             Map(x => x.UserId).Not.Nullable();
             Map(x => x.Name).Not.Nullable();
