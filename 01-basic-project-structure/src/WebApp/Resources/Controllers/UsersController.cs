@@ -15,28 +15,82 @@ namespace WebApp.Resources.Controllers
     {
         private readonly ILogger _logger;
         private readonly IBaseRepository<User> _repo;
-        private User user;
+        private User _user;
 
         public UsersController(ILogger<ValuesController> logger, IBaseRepository<User> repo, User user)
         {
             _logger = logger;
             _repo = repo;
-            this.user = user;
+            _user = user;
         }
 
         [HttpPost("create")]
         public ActionResult CreateUser([FromBody] UserDto user)
         {
+            
             if (user.LastName.Length > 50 || user.FirstName.Length > 50)
             {
                 return BadRequest("User name too long");
             }
-            this.user.Set(user.FirstName, user.LastName);
-
-            var result = _repo.Insert(this.user);
-
-//            var u = _repo.GetById(Guid.Parse("C60A210D-E50A-4CFD-8DAE-2732600AD488"));
+            
+            _user.Set(user.FirstName, user.LastName);
+            var result = _repo.Insert(_user);
             return Ok(result);
         }
+        
+        [HttpGet("{id}")]
+        public ActionResult GetUserById([FromRoute] string id)
+        {
+            
+            Guid userId = Guid.Empty;
+            User user = null;
+            
+            try
+            {
+                userId = Guid.Parse(id);
+            }
+            catch
+            {
+                return BadRequest("User id not valid");
+            }
+            
+            user = _repo.GetById(userId);
+            if (user == null)
+            {
+                return NotFound("User not existing");
+            }
+            return Ok(user);
+        }
+        
+        [HttpGet("{id}/books")]
+        public ActionResult GetUserBooks([FromRoute] string id)
+        {
+            Guid userId = Guid.Empty;
+            User user = null;
+            
+            try
+            {
+                userId = Guid.Parse(id);
+            }
+            catch
+            {
+                return BadRequest("User id not valid");
+            }
+            
+            user = _repo.GetById(userId);
+            if (user == null)
+            {
+                return NotFound("User not existing");
+            }
+            
+            var u = _repo.GetById(userId);
+            return Ok(u.Books);
+        }
+        
+//        [HttpPost("{id}/books/add")]
+//        public ActionResult AddBook([FromBody] BookDto book)
+//        {
+//            return Ok();
+//        }
     }
 }

@@ -23,13 +23,13 @@ namespace WebApp
         public static IContainer Register(IServiceCollection services)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IBaseRepository<>));
-            builder.RegisterType<UserRepository>();
-            builder.RegisterType<DatabaseSessionProvider>().As<IDatabaseSessionProvider>();
-            builder.RegisterType<DatabaseModel>();
-            builder.RegisterType<SqlStatementInterceptor>();
-            builder.RegisterType<User>();
-            builder.RegisterType<TableNameConvention>();
+            builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IBaseRepository<>)).InstancePerDependency();
+            builder.RegisterType<UserRepository>().InstancePerDependency();
+            builder.RegisterType<DatabaseSessionProvider>().As<IDatabaseSessionProvider>().OwnedByLifetimeScope();
+            builder.RegisterType<DatabaseModel>().OwnedByLifetimeScope();
+            builder.RegisterType<SqlStatementInterceptor>().SingleInstance();
+            builder.RegisterType<User>().InstancePerDependency();
+            builder.RegisterType<TableNameConvention>().SingleInstance();
             builder.Populate(services);
             return builder.Build();
         }
