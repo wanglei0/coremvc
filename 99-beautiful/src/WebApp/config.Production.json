@@ -1,0 +1,17 @@
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Splunk"],
+    "MinimumLevel": "Warning",
+    "WriteTo": [
+      {"Name": "Console"},
+      {
+        "Name": "EventCollector",
+        "Args": {
+          "splunkHost": "http://127.0.0.1:44402",
+          "eventCollectorToken": "ef0eff26-7edb-45f6-ac23-3afb8d25cf83"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  }
+}

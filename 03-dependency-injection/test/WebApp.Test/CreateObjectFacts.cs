@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace WebApp.Test
 {
@@ -161,6 +163,36 @@ namespace WebApp.Test
             // Then
             Assert.Same(typeof(WithDependency), instance.GetType());
             Assert.Same(typeof(IndependentType), instance.Dependency.GetType());
+        }
+
+        interface ICommon {}
+        class CommonImplA : ICommon {}
+        class CommonImplB : ICommon {}
+
+        [Fact]
+        public void should_replace_type()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddTransient<ICommon, CommonImplA>();
+            serviceCollection.AddTransient<ICommon, CommonImplB>();
+
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+
+            var instance = provider.GetService<ICommon>();
+            Assert.True(instance is CommonImplB);
+        }
+        
+        [Fact]
+        public void should_get_all_type_instances()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddTransient<ICommon, CommonImplA>();
+            serviceCollection.AddTransient<ICommon, CommonImplB>();
+
+            ServiceProvider provider = serviceCollection.BuildServiceProvider();
+
+            var instances = provider.GetService<IEnumerable<ICommon>>();
+            Assert.Equal(2, instances.Count());
         }
     }
 }
